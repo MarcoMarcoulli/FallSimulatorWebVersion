@@ -1,19 +1,21 @@
-// src/components/MassIcon.tsx
 import React from 'react';
 import { Mass } from '../logic/simulation/Mass';
+import { SimulationManager } from '../logic/simulation/SimulationManager';
+import { useStartAnimation } from '../logic/simulation/useMassAnimation';
 
 interface MassIconProps {
-  mass: Mass;
-  imageUrl: string;
+  simulation: SimulationManager;
 }
 
-const MassIcon: React.FC<MassIconProps> = ({ mass, imageUrl }) => {
-  const x = mass.getXCentered();
-  const y = mass.getYCentered();
+const MassIcon: React.FC<MassIconProps> = ({ simulation }) => {
+  const mass = simulation.getMass();
+  useStartAnimation(simulation); // Avvia l’animazione al mount
+
+  const x = mass!.getXCentered();
+  const y = mass!.getYCentered();
 
   return (
     <img
-      src={imageUrl}
       alt="mass icon"
       style={{
         position: 'absolute',
