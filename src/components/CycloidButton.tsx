@@ -1,0 +1,57 @@
+// src/components/CycloidButton.tsx
+import React from 'react';
+import { useInput } from '../context/InputContext';
+import { useStateContext } from '../context/StateContext';
+import { UIStates } from '../types/UIStates';
+import { Cycloid } from '../logic/curves/Cycloid';
+import { drawCurve } from '../logic/utils/CurveVisualizer';
+import { SimulationManager } from '../logic/simulation/SimulationManager';
+import { addSimulation } from '../logic/simulation/Simulations';
+
+interface CycloidButtonProps {
+  ctx: CanvasRenderingContext2D | null;
+}
+
+const CycloidButton: React.FC<CycloidButtonProps> = ({ ctx }) => {
+  const { startPoint, endPoint, g } = useInput();
+  const { setUIState } = useStateContext();
+
+  const handleCycloidClick = () => {
+    if (!startPoint || !endPoint || !ctx || g === null) {
+      console.warn('Dati mancanti per creare la cicloide.');
+      return;
+    }
+
+    let cycloid;
+    try {
+      cycloid = new Cycloid(startPoint, endPoint);
+    } catch (error) {
+      console.error('Errore nella creazione della cicloide:', error);
+      // Puoi anche mostrare un messaggio visivo se vuoi bloccare l’utente per qualche secondo
+      return;
+    }
+
+    cycloid.setRandomColors();
+
+    const simulation = new SimulationManager(cycloid);
+    simulation.setSlopes(cycloid.calculateSlopes());
+    simulation.calculateTimeParametrization(g);
+    addSimulation(simulation);
+
+    const points = simulation.getPoints();
+    drawCurve(points, ctx, cycloid.getRed(), cycloid.getGreen(), cycloid.getBlue());
+
+    setUIState(UIStates.CHOOSING_MASS);
+  };
+
+  return (
+    <button
+      onClick={handleCycloidClick}
+      className="bg-purple-600 text-white px-3 py-1 rounded hover:bg-purple-700"
+    >
+      Cicloide
+    </button>
+  );
+};
+
+export default CycloidButton;
