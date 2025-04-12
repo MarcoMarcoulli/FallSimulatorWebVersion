@@ -1,7 +1,7 @@
 // src/components/Layout.tsx
 import React from 'react';
 import ControlPanel from './components/ControlPanel';
-import Canvas from './components/Canvas';
+import AnimationLayer from './components/AnimationLayer';
 
 const Layout: React.FC = () => {
   return (
@@ -11,9 +11,9 @@ const Layout: React.FC = () => {
         <ControlPanel />
       </div>
 
-      {/* Area canvas a destra che occupa lo spazio rimanente */}
+      {/* Area canvas e animazioni a destra */}
       <div className="flex-1 bg-white relative">
-        <Canvas />
+        <AnimationLayer /> {/* <-- questo racchiude sia il canvas che le masse animate */}
       </div>
     </div>
   );

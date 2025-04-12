@@ -1,27 +1,20 @@
 import React, { useState } from 'react';
 import { useInput } from '../context/InputContext';
+import { useCanvasContext } from '../context/CanvasContext';
 import { Circle } from '../logic/curves/Circle';
 import { drawCurve, clearLastCurve } from '../logic/utils/CurveVisualizer';
 import { SimulationManager } from '../logic/simulation/SimulationManager';
 import { getSimulations, replaceLastSimulation } from '../logic/simulation/Simulations';
 
-interface RadiusSliderProps {
-  initialRadius: number;
-  min?: number;
-  max?: number;
-  convexity: 1 | -1;
-  ctx: CanvasRenderingContext2D | null;
-}
-
-const RadiusSlider: React.FC<RadiusSliderProps> = ({
-  initialRadius,
-  min = initialRadius,
-  max = initialRadius * 3,
-  convexity,
-  ctx,
-}) => {
-  const [radius, setRadius] = useState(initialRadius);
+const RadiusSlider: React.FC = () => {
   const { startPoint, endPoint } = useInput();
+  const { initialRadius, convexity, ctx } = useCanvasContext();
+
+  // ✅ INIZIALIZZA QUI GLI HOOK, PRIMA DI QUALSIASI return
+  const [radius, setRadius] = useState(initialRadius ?? 0);
+
+  // ✅ DOPO gli hook puoi fare return condizionale
+  if (initialRadius === null || convexity === null || !ctx) return null;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newRadius = parseFloat(e.target.value);
@@ -29,10 +22,8 @@ const RadiusSlider: React.FC<RadiusSliderProps> = ({
 
     if (!startPoint || !endPoint || !ctx) return;
 
-    // 1. Ricrea la nuova curva Circle
     const circle = new Circle(startPoint, endPoint, convexity, newRadius);
 
-    // 2. Mantieni i colori dalla curva precedente (se esiste)
     const previous = getSimulations().at(-1)?.getCurve();
     if (previous) {
       circle.setRed(previous.getRed());
@@ -40,13 +31,10 @@ const RadiusSlider: React.FC<RadiusSliderProps> = ({
       circle.setBlue(previous.getBlue());
     }
 
-    // 3. Crea nuovo SimulationManager con la nuova curva
     const circleSimulation = new SimulationManager(circle);
     replaceLastSimulation(circleSimulation);
 
-    // 4. Ripulisci e ridisegna tutte le curve
     clearLastCurve(ctx);
-
     getSimulations().forEach((sim) => {
       const pts = sim.getPoints();
       const curve = sim.getCurve();
@@ -61,8 +49,8 @@ const RadiusSlider: React.FC<RadiusSliderProps> = ({
       </label>
       <input
         type="range"
-        min={min}
-        max={max}
+        min={initialRadius}
+        max={initialRadius * 3}
         step="0.1"
         value={radius}
         onChange={handleChange}

@@ -3,12 +3,9 @@ import React from 'react';
 import { useInput } from '../context/InputContext';
 import { useStateContext } from '../context/StateContext';
 import { UIStates } from '../types/UIStates';
+import { clearSimulations } from '../logic/simulation/Simulations';
 
-interface CancelInputButtonProps {
-  onClearCanvas: () => void;
-}
-
-const CancelInputButton: React.FC<CancelInputButtonProps> = ({ onClearCanvas }) => {
+const CancelInputButton: React.FC = () => {
   const { clearInput } = useInput();
   const { setUIState } = useStateContext();
 
@@ -17,8 +14,7 @@ const CancelInputButton: React.FC<CancelInputButtonProps> = ({ onClearCanvas }) 
     clearInput();
     // Imposta lo stato dell'interfaccia a CHOOSING_GRAVITY
     setUIState(UIStates.CHOOSING_GRAVITY);
-    // Chiama la callback per pulire il canvas
-    onClearCanvas();
+    clearSimulations();
   };
 
   return (

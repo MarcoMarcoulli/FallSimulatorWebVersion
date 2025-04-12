@@ -1,5 +1,5 @@
 // src/utils/inputValidators.ts
-import { Point } from '../types/Point';
+import { Point } from '../../types/Point';
 
 /**
  * Verifica il punto di arrivo rispetto al punto di partenza.

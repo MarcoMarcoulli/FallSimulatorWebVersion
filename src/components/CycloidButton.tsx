@@ -1,5 +1,6 @@
 // src/components/CycloidButton.tsx
 import React from 'react';
+import { useCanvasContext } from '../context/CanvasContext';
 import { useInput } from '../context/InputContext';
 import { useStateContext } from '../context/StateContext';
 import { UIStates } from '../types/UIStates';
@@ -8,11 +9,8 @@ import { drawCurve } from '../logic/utils/CurveVisualizer';
 import { SimulationManager } from '../logic/simulation/SimulationManager';
 import { addSimulation } from '../logic/simulation/Simulations';
 
-interface CycloidButtonProps {
-  ctx: CanvasRenderingContext2D | null;
-}
-
-const CycloidButton: React.FC<CycloidButtonProps> = ({ ctx }) => {
+const CycloidButton: React.FC = () => {
+  const { ctx } = useCanvasContext();
   const { startPoint, endPoint, g } = useInput();
   const { setUIState } = useStateContext();
 

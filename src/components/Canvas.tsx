@@ -1,29 +1,31 @@
-// src/components/Canvas.tsx
+// Canvas.tsx
 import React, { useRef, useEffect } from 'react';
 import { useStateContext } from '../context/StateContext';
 import { useInput } from '../context/InputContext';
 import { UIStates } from '../types/UIStates';
 import { Point } from '../types/Point';
+import { useCanvasContext } from '../context/CanvasContext';
 
 const Canvas: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { UIState, setUIState } = useStateContext();
   const { setStartPoint, setEndPoint, addIntermediatePoint } = useInput();
+  const { setCtx } = useCanvasContext();
 
-  // Assicurati che gli attributi del canvas riflettano le dimensioni dello stile
   useEffect(() => {
     const canvas = canvasRef.current;
     if (canvas) {
       canvas.width = canvas.offsetWidth;
       canvas.height = canvas.offsetHeight;
+      const context = canvas.getContext('2d');
+      setCtx(context); // Salva il contesto nel provider
     }
-  }, []); // eseguito una volta al montaggio
+  }, [setCtx]);
 
   const handleCanvasClick = (event: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    // Usa il bounding rect per ottenere le coordinate relative
     const rect = canvas.getBoundingClientRect();
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;

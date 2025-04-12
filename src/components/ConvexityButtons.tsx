@@ -1,5 +1,6 @@
 import React from 'react';
 import { useInput } from '../context/InputContext';
+import { useCanvasContext } from '../context/CanvasContext';
 import { useStateContext } from '../context/StateContext';
 import { Circle } from '../logic/curves/Circle';
 import { drawCurve } from '../logic/utils/CurveVisualizer';
@@ -9,45 +10,62 @@ import { UIStates } from '../types/UIStates';
 
 interface ConvexityButtonProps {
   convexity: 1 | -1;
-  ctx: CanvasRenderingContext2D | null;
-  setSliderRadius: (min: number, max: number, initial: number) => void;
 }
 
-const ConvexityButton: React.FC<ConvexityButtonProps> = ({ convexity, ctx, setSliderRadius }) => {
+const ConvexityButton: React.FC<ConvexityButtonProps> = ({ convexity }) => {
   const { startPoint, endPoint } = useInput();
+  const { ctx } = useCanvasContext();
   const { setUIState } = useStateContext();
+
+  // Stato per memorizzare il raggio iniziale da passare a RadiusSlider
+  const { setInitialRadius, setConvexity } = useCanvasContext();
 
   const handleClick = () => {
     if (!startPoint || !endPoint || !ctx) return;
 
+    // 1. Crea la circonferenza iniziale (Circle) usando i punti e la convexity
     const circle = new Circle(startPoint, endPoint, convexity);
     circle.setRandomColors();
 
+    // 2. Crea la simulazione e aggiungila alla lista delle simulazioni
     const simulation = new SimulationManager(circle);
     addSimulation(simulation);
+    // (Eventuale: aggiungi observer se necessario)
 
+    // 3. Ottieni i punti e i colori della circonferenza dalla simulazione
     const points = simulation.getPoints();
-    drawCurve(points, ctx, circle.getRed(), circle.getGreen(), circle.getBlue());
+    const red = simulation.getCurve().getRed();
+    const green = simulation.getCurve().getGreen();
+    const blue = simulation.getCurve().getBlue();
 
-    // Calcolo raggio iniziale
-    let initialRadius = circle.getR();
+    // 4. Disegna la circonferenza sul canvas
+    drawCurve(points, ctx, red, green, blue);
+
+    // 5. Calcola il raggio iniziale.
+    // Assumiamo che circle.getR() restituisca il raggio della circonferenza.
+    let computedRadius = circle.getR();
     if (convexity === 1) {
+      // Se la convexity è "up", correggi il segno in base alla differenza orizzontale
       const deltaX = endPoint.x - startPoint.x;
-      initialRadius = (deltaX / Math.abs(deltaX)) * initialRadius;
+      computedRadius = (deltaX / Math.abs(deltaX)) * computedRadius;
     }
-
-    setSliderRadius(initialRadius, initialRadius * 3, initialRadius);
+    // Imposta il raggio iniziale nello stato
+    setInitialRadius(computedRadius);
+    setConvexity(convexity);
+    // 6. Transizione dello stato dell'interfaccia a CHOOSING_RADIUS
     setUIState(UIStates.CHOOSING_RADIUS);
   };
 
   const label = convexity === 1 ? 'Convessità ↑' : 'Convessità ↓';
-  const color =
+  const buttonColor =
     convexity === 1 ? 'bg-green-600 hover:bg-green-700' : 'bg-yellow-600 hover:bg-yellow-700';
 
   return (
-    <button onClick={handleClick} className={`${color} text-white px-3 py-1 rounded`}>
-      {label}
-    </button>
+    <div>
+      <button onClick={handleClick} className={`${buttonColor} text-white px-3 py-1 rounded`}>
+        {label}
+      </button>
+    </div>
   );
 };
 

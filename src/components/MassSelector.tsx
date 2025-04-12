@@ -30,9 +30,9 @@ const MassSelector: React.FC = () => {
     lastSimulation()?.setMass(mass);
 
     // 3. Aggiungi l'immagine nel livello di animazione
-    const animationLayer = document.getElementById('animation-layer');
-    if (animationLayer) {
-      animationLayer.appendChild(mass.getImageElement());
+    const animationCanvas = document.getElementById('Canvas.tsx');
+    if (animationCanvas) {
+      animationCanvas.appendChild(mass.getImageElement());
     }
 
     // 4. Passa allo stato READY_TO_SIMULATE e rimuove i pulsanti (gestito dal pannello)

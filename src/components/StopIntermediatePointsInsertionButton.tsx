@@ -1,5 +1,6 @@
 // src/components/EndInputButton.tsx
 import React from 'react';
+import { useCanvasContext } from '../context/CanvasContext';
 import { useInput } from '../context/InputContext';
 import { useStateContext } from '../context/StateContext';
 import { UIStates } from '../types/UIStates';
@@ -8,11 +9,8 @@ import { drawCurve } from '../logic/utils/CurveVisualizer';
 import { SimulationManager } from '../logic/simulation/SimulationManager';
 import { addSimulation } from '../logic/simulation/Simulations';
 
-interface EndInputButtonProps {
-  ctx: CanvasRenderingContext2D | null;
-}
-
-const EndInputButton: React.FC<EndInputButtonProps> = ({ ctx }) => {
+const StopIntermediatePointsInsertion: React.FC = () => {
+  const { ctx } = useCanvasContext();
   const { startPoint, endPoint, intermediatePoints, clearIntermediatePoints, g } = useInput();
   const { setUIState } = useStateContext();
 
@@ -53,4 +51,4 @@ const EndInputButton: React.FC<EndInputButtonProps> = ({ ctx }) => {
   );
 };
 
-export default EndInputButton;
+export default StopIntermediatePointsInsertion;
