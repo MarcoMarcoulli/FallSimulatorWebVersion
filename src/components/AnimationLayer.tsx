@@ -1,29 +1,36 @@
 // src/components/AnimationLayer.tsx
-import React, { useEffect } from 'react';
+import React from 'react';
 import Canvas from './Canvas';
-import { getSimulations } from '../logic/simulation/Simulations';
+import { useSimulationContext } from '../context/simulation/useSimulationContext';
 
 const AnimationLayer: React.FC = () => {
-  useEffect(() => {
-    const layer = document.getElementById('animation-layer');
-    if (!layer) return;
-
-    // Aggiunge tutte le immagini delle masse
-    getSimulations().forEach((sim) => {
-      const mass = sim.getMass();
-      if (mass) {
-        const img = mass.getImageElement();
-        if (!layer.contains(img)) {
-          layer.appendChild(img);
-        }
-      }
-    });
-  });
+  const { simulations } = useSimulationContext();
 
   return (
     <div className="w-full h-full relative" id="animation-layer">
-      {/* Canvas in background */}
       <Canvas />
+
+      {/* Masse animate sopra il canvas */}
+      {simulations.map((sim, index) => {
+        const mass = sim.getMass();
+        if (!mass) return null;
+
+        return (
+          <img
+            key={index}
+            src={mass.getImageUrl()}
+            alt="mass"
+            style={{
+              position: 'absolute',
+              left: `${mass.getXCentered()}px`,
+              top: `${mass.getYCentered()}px`,
+              width: `${mass.getMassDiameter()}px`,
+              height: `${mass.getMassDiameter()}px`,
+              pointerEvents: 'none',
+            }}
+          />
+        );
+      })}
     </div>
   );
 };

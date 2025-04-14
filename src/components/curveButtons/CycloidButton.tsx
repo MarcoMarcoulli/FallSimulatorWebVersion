@@ -1,17 +1,17 @@
 // src/components/CycloidButton.tsx
 import React from 'react';
-import { useCanvasContext } from '../context/CanvasContext';
-import { useInput } from '../context/InputContext';
-import { useStateContext } from '../context/StateContext';
-import { UIStates } from '../types/UIStates';
-import { Cycloid } from '../logic/curves/Cycloid';
-import { drawCurve } from '../logic/utils/CurveVisualizer';
-import { SimulationManager } from '../logic/simulation/SimulationManager';
-import { addSimulation } from '../logic/simulation/Simulations';
+import { useCanvasContext } from '../../context/canvas/useCanvasContext';
+import { useInputContext } from '../../context/input/useInputContext';
+import { useStateContext } from '../../context/state/useStateContext';
+import { UIStates } from '../../types/UIStates';
+import { Cycloid } from '../../logic/curves/Cycloid';
+import { drawCurve } from '../../logic/utils/CurveVisualizer';
+import { SimulationManager } from '../../logic/simulation/SimulationManager';
+import { addSimulation } from '../../logic/simulation/Simulations';
 
 const CycloidButton: React.FC = () => {
   const { ctx } = useCanvasContext();
-  const { startPoint, endPoint, g } = useInput();
+  const { startPoint, endPoint, g } = useInputContext();
   const { setUIState } = useStateContext();
 
   const handleCycloidClick = () => {

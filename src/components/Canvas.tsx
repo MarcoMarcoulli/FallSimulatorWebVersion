@@ -1,15 +1,15 @@
-// Canvas.tsx
 import React, { useRef, useEffect } from 'react';
-import { useStateContext } from '../context/StateContext';
-import { useInput } from '../context/InputContext';
+import { useStateContext } from '../context/state/useStateContext';
+import { useInputContext } from '../context/input/useInputContext';
 import { UIStates } from '../types/UIStates';
 import { Point } from '../types/Point';
-import { useCanvasContext } from '../context/CanvasContext';
+import { useCanvasContext } from '../context/canvas/useCanvasContext';
+import { drawStartPoint, drawEndPoint, drawIntermediatePoint } from '../logic/utils/PointDrawer';
 
 const Canvas: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { UIState, setUIState } = useStateContext();
-  const { setStartPoint, setEndPoint, addIntermediatePoint } = useInput();
+  const { setStartPoint, setEndPoint, addIntermediatePoint } = useInputContext();
   const { setCtx } = useCanvasContext();
 
   useEffect(() => {
@@ -18,7 +18,7 @@ const Canvas: React.FC = () => {
       canvas.width = canvas.offsetWidth;
       canvas.height = canvas.offsetHeight;
       const context = canvas.getContext('2d');
-      setCtx(context); // Salva il contesto nel provider
+      setCtx(context);
     }
   }, [setCtx]);
 
@@ -37,43 +37,29 @@ const Canvas: React.FC = () => {
     switch (UIState) {
       case UIStates.WAITING_FOR_START_POINT:
         setStartPoint(point);
-        ctx.fillStyle = 'red';
-        ctx.beginPath();
-        ctx.arc(x, y, 6, 0, 2 * Math.PI);
-        ctx.fill();
+        drawStartPoint(ctx, point);
         setUIState(UIStates.WAITING_FOR_END_POINT);
         break;
 
       case UIStates.WAITING_FOR_END_POINT:
         try {
           setEndPoint(point);
+          drawEndPoint(ctx, point);
+          setUIState(UIStates.CHOOSING_CURVE);
         } catch (error) {
           console.error(error);
-          return;
         }
-        ctx.fillStyle = 'blue';
-        ctx.beginPath();
-        ctx.arc(x, y, 6, 0, 2 * Math.PI);
-        ctx.fill();
-        setUIState(UIStates.CHOOSING_CURVE);
         break;
 
-      case UIStates.INSERTING_INTERMEDIATE_POINTS: {
+      case UIStates.INSERTING_INTERMEDIATE_POINTS:
         try {
           addIntermediatePoint(point);
+          drawIntermediatePoint(ctx, point);
         } catch (error) {
           console.error(error);
-          return;
         }
-        const r = Math.floor(Math.random() * 256);
-        const g = Math.floor(Math.random() * 256);
-        const b = Math.floor(Math.random() * 256);
-        ctx.fillStyle = `rgb(${r},${g},${b})`;
-        ctx.beginPath();
-        ctx.arc(x, y, 6, 0, 2 * Math.PI);
-        ctx.fill();
         break;
-      }
+
       default:
         break;
     }

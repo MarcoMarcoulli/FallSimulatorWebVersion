@@ -1,12 +1,12 @@
 // src/components/ConfirmRadiusButton.tsx
 import React from 'react';
-import { useInput } from '../context/InputContext';
-import { useStateContext } from '../context/StateContext';
+import { useInputContext } from '../context/input/useInputContext';
+import { useStateContext } from '../context/state/useStateContext';
 import { UIStates } from '../types/UIStates';
 import { lastSimulation } from '../logic/simulation/Simulations';
 
 const ConfirmRadiusButton: React.FC = () => {
-  const { g } = useInput();
+  const { g } = useInputContext();
   const { setUIState } = useStateContext();
 
   const handleClick = () => {

@@ -1,7 +1,7 @@
 // src/components/CubicSplineButton.tsx
 import React from 'react';
-import { UIStates } from '../types/UIStates';
-import { useStateContext } from '../context/StateContext';
+import { UIStates } from '../../types/UIStates';
+import { useStateContext } from '../../context/state/useStateContext';
 
 const CubicSplineButton: React.FC = () => {
   const { setUIState } = useStateContext();

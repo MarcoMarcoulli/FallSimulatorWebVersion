@@ -1,20 +1,17 @@
-import React, { useState } from 'react';
-import { useInput } from '../context/InputContext';
-import { useCanvasContext } from '../context/CanvasContext';
+import React from 'react';
+import { useInputContext } from '../context/input/useInputContext';
+import { useCanvasContext } from '../context/canvas/useCanvasContext';
 import { Circle } from '../logic/curves/Circle';
 import { drawCurve, clearLastCurve } from '../logic/utils/CurveVisualizer';
 import { SimulationManager } from '../logic/simulation/SimulationManager';
 import { getSimulations, replaceLastSimulation } from '../logic/simulation/Simulations';
 
 const RadiusSlider: React.FC = () => {
-  const { startPoint, endPoint } = useInput();
-  const { initialRadius, convexity, ctx } = useCanvasContext();
+  const { startPoint, endPoint, radius, setRadius, convexity } = useInputContext();
+  const { ctx } = useCanvasContext();
 
-  // ✅ INIZIALIZZA QUI GLI HOOK, PRIMA DI QUALSIASI return
-  const [radius, setRadius] = useState(initialRadius ?? 0);
-
-  // ✅ DOPO gli hook puoi fare return condizionale
-  if (initialRadius === null || convexity === null || !ctx) return null;
+  // Non continuare se mancano i dati
+  if (radius === null || convexity === null || !ctx) return null;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newRadius = parseFloat(e.target.value);
@@ -49,8 +46,8 @@ const RadiusSlider: React.FC = () => {
       </label>
       <input
         type="range"
-        min={initialRadius}
-        max={initialRadius * 3}
+        min={radius}
+        max={radius * 3}
         step="0.1"
         value={radius}
         onChange={handleChange}

@@ -1,10 +1,11 @@
+// src/components/MassSelector.tsx
 import React from 'react';
 import MassButton from './MassButton';
 import { MassIconType } from '../types/MassIconType';
-import { useStateContext } from '../context/StateContext';
-import { useInput } from '../context/InputContext';
+import { useStateContext } from '../context/state/useStateContext';
+import { useInputContext } from '../context/input/useInputContext';
+import { useSimulationContext } from '../context/simulation/useSimulationContext';
 import { UIStates } from '../types/UIStates';
-import { lastSimulation } from '../logic/simulation/Simulations';
 import { Mass } from '../logic/simulation/Mass';
 
 import galileoImg from '../assets/masses/galileo.png';
@@ -15,7 +16,8 @@ import jakobImg from '../assets/masses/jakob.png';
 
 const MassSelector: React.FC = () => {
   const { setUIState } = useStateContext();
-  const { startPoint } = useInput();
+  const { startPoint } = useInputContext();
+  const { simulations, updateLastSimulation } = useSimulationContext();
 
   const handleMassSelection = (iconType: MassIconType, imageSrc: string) => {
     if (!startPoint) {
@@ -23,24 +25,22 @@ const MassSelector: React.FC = () => {
       return;
     }
 
-    // 1. Crea oggetto Mass
     const mass = new Mass(startPoint, iconType, imageSrc);
 
-    // 2. Assegna alla simulazione
-    lastSimulation()?.setMass(mass);
-
-    // 3. Aggiungi l'immagine nel livello di animazione
-    const animationCanvas = document.getElementById('Canvas.tsx');
-    if (animationCanvas) {
-      animationCanvas.appendChild(mass.getImageElement());
+    // Clona l'ultima simulazione, aggiorna la massa e sostituiscila
+    const lastSim = simulations.at(-1);
+    if (lastSim) {
+      updateLastSimulation((prevSim) => {
+        prevSim.setMass(mass);
+        return prevSim;
+      });
     }
 
-    // 4. Passa allo stato READY_TO_SIMULATE e rimuove i pulsanti (gestito dal pannello)
     setUIState(UIStates.READY_TO_SIMULATE);
   };
 
   return (
-    <div className="flex gap-4">
+    <div className="flex gap-4 flex-wrap">
       <MassButton
         imageSrc={galileoImg}
         label="GALILEO"

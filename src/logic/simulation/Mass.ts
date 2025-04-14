@@ -4,25 +4,13 @@ import { MassIconType } from '../../types/MassIconType';
 export class Mass {
   private position: Point;
   private iconType: MassIconType;
-  private image: HTMLImageElement;
+  private imageUrl: string;
   static readonly MASS_DIAMETER = 40;
 
   constructor(startPosition: Point, iconType: MassIconType, imageSrc: string) {
     this.position = startPosition;
     this.iconType = iconType;
-
-    // Crea l'immagine e la configura
-    this.image = new Image();
-    this.image.src = imageSrc;
-    this.image.width = Mass.MASS_DIAMETER;
-    this.image.height = Mass.MASS_DIAMETER;
-    this.image.style.position = 'absolute';
-    this.updateImagePosition();
-  }
-
-  private updateImagePosition(): void {
-    this.image.style.left = `${this.getXCentered()}px`;
-    this.image.style.top = `${this.getYCentered()}px`;
+    this.imageUrl = imageSrc;
   }
 
   getCurrentPosition(): Point {
@@ -31,7 +19,6 @@ export class Mass {
 
   setCurrentPosition(newPosition: Point): void {
     this.position = newPosition;
-    this.updateImagePosition();
   }
 
   getMassDiameter(): number {
@@ -50,7 +37,7 @@ export class Mass {
     return this.iconType;
   }
 
-  getImageElement(): HTMLImageElement {
-    return this.image;
+  getImageUrl(): string {
+    return this.imageUrl;
   }
 }

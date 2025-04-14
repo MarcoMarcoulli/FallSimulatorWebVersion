@@ -1,16 +1,19 @@
 // src/App.tsx
 import React from 'react';
-import { StateProvider } from './context/StateContext';
-import { InputProvider } from './context/InputContext';
+import { StateProvider } from './context/state/StateProvider';
+import { InputProvider } from './context/input/InputProvider';
+import { CanvasProvider } from './context/canvas/CanvasProvider';
+import { SimulationProvider } from './context/simulation/SimulationProvider';
 import Layout from './Layout';
-import { CanvasProvider } from './context/CanvasContext';
 
 const App: React.FC = () => {
   return (
     <StateProvider>
       <InputProvider>
         <CanvasProvider>
-          <Layout />
+          <SimulationProvider>
+            <Layout />
+          </SimulationProvider>
         </CanvasProvider>
       </InputProvider>
     </StateProvider>

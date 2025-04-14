@@ -1,7 +1,7 @@
 import React from 'react';
-import { useInput } from '../context/InputContext';
-import { useCanvasContext } from '../context/CanvasContext';
-import { useStateContext } from '../context/StateContext';
+import { useInputContext } from '../context/input/useInputContext';
+import { useCanvasContext } from '../context/canvas/useCanvasContext';
+import { useStateContext } from '../context/state/useStateContext';
 import { Circle } from '../logic/curves/Circle';
 import { drawCurve } from '../logic/utils/CurveVisualizer';
 import { SimulationManager } from '../logic/simulation/SimulationManager';
@@ -13,12 +13,12 @@ interface ConvexityButtonProps {
 }
 
 const ConvexityButton: React.FC<ConvexityButtonProps> = ({ convexity }) => {
-  const { startPoint, endPoint } = useInput();
+  const { startPoint, endPoint } = useInputContext();
   const { ctx } = useCanvasContext();
   const { setUIState } = useStateContext();
 
   // Stato per memorizzare il raggio iniziale da passare a RadiusSlider
-  const { setInitialRadius, setConvexity } = useCanvasContext();
+  const { setRadius, setConvexity } = useInputContext();
 
   const handleClick = () => {
     if (!startPoint || !endPoint || !ctx) return;
@@ -50,7 +50,7 @@ const ConvexityButton: React.FC<ConvexityButtonProps> = ({ convexity }) => {
       computedRadius = (deltaX / Math.abs(deltaX)) * computedRadius;
     }
     // Imposta il raggio iniziale nello stato
-    setInitialRadius(computedRadius);
+    setRadius(computedRadius);
     setConvexity(convexity);
     // 6. Transizione dello stato dell'interfaccia a CHOOSING_RADIUS
     setUIState(UIStates.CHOOSING_RADIUS);

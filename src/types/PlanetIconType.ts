@@ -1,10 +1,10 @@
 // Enumerazione dei pianeti
 export enum PlanetIcon {
-  MOON = 'MOON',
-  MARS = 'MARS',
-  EARTH = 'EARTH',
-  JUPITER = 'JUPITER',
-  SUN = 'SUN',
+  MOON,
+  MARS,
+  EARTH,
+  JUPITER,
+  SUN,
 }
 
 // Mapping dei valori di gravità in millimetri (gMm) per ogni pianeta

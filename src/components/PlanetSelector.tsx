@@ -1,16 +1,16 @@
 // src/components/PlanetSelector.tsx
 import React from 'react';
-import PlanetButton from './PlanetButton';
-import { useStateContext } from '../context/StateContext';
-import { useInput } from '../context/InputContext';
+
+import { useStateContext } from '../context/state/useStateContext';
+import { useInputContext } from '../context/input/useInputContext';
+
 import { UIStates } from '../types/UIStates';
+
+import PlanetButton from './PlanetButton';
 import { PlanetIcon, gravityMapping } from '../types/PlanetIconType';
 
-// Valore placeholder per la dimensione del pixel in millimetri;
-// sostituisci con il valore reale se disponibile
 const pixelHeightMm = 1;
 
-// Importa le immagini dalla cartella src/assets
 import moonImg from '../assets/planets/moon.png';
 import marsImg from '../assets/planets/mars.png';
 import earthImg from '../assets/planets/earth.png';
@@ -19,19 +19,13 @@ import sunImg from '../assets/planets/sun.png';
 
 const PlanetSelector: React.FC = () => {
   const { setUIState } = useStateContext();
-  const { setG } = useInput();
+  const { setG } = useInputContext();
 
-  // Callback che replica la logica handleGravitySelection
   const handleGravitySelection = (planet: PlanetIcon) => {
     const gMm = gravityMapping[planet] || 0;
-    // Calcola g: g = gMm / (pixelHeightMm * 100)
     const g = gMm / (pixelHeightMm * 100);
     console.log('Gravity set to:', g);
-
-    // Imposta il valore di g nel context
     setG(g);
-
-    // Cambia lo stato dell'interfaccia a WAITING_FOR_START_POINT
     setUIState(UIStates.WAITING_FOR_START_POINT);
   };
 

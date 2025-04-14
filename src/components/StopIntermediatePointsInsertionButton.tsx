@@ -1,8 +1,8 @@
 // src/components/EndInputButton.tsx
 import React from 'react';
-import { useCanvasContext } from '../context/CanvasContext';
-import { useInput } from '../context/InputContext';
-import { useStateContext } from '../context/StateContext';
+import { useCanvasContext } from '../context/canvas/useCanvasContext';
+import { useInputContext } from '../context/input/useInputContext';
+import { useStateContext } from '../context/state/useStateContext';
 import { UIStates } from '../types/UIStates';
 import { CubicSpline } from '../logic/curves/CubicSpline';
 import { drawCurve } from '../logic/utils/CurveVisualizer';
@@ -11,7 +11,8 @@ import { addSimulation } from '../logic/simulation/Simulations';
 
 const StopIntermediatePointsInsertion: React.FC = () => {
   const { ctx } = useCanvasContext();
-  const { startPoint, endPoint, intermediatePoints, clearIntermediatePoints, g } = useInput();
+  const { startPoint, endPoint, intermediatePoints, clearIntermediatePoints, g } =
+    useInputContext();
   const { setUIState } = useStateContext();
 
   const handleClick = () => {

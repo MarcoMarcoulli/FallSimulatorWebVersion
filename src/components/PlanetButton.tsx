@@ -10,11 +10,15 @@ interface PlanetButtonProps {
 
 const PlanetButton: React.FC<PlanetButtonProps> = ({ imageSrc, label, gravityText, onClick }) => {
   return (
-    <button onClick={onClick} className="flex flex-col items-center focus:outline-none">
-      <img src={imageSrc} alt={label} className="w-16 h-16" />
-      <span className="uppercase text-xs mt-1">{label}</span>
-      {gravityText && <span className="text-xs">{gravityText}</span>}
-    </button>
+    <div className="flex flex-col items-center text-center w-20">
+      <button onClick={onClick} className="focus:outline-none">
+        <img src={imageSrc} alt={label} className="w-16 h-16" />
+      </button>
+      <div className="mt-1">
+        <span className="block uppercase text-xs">{label}</span>
+        {gravityText && <span className="block text-xs">{gravityText}</span>}
+      </div>
+    </div>
   );
 };
 
