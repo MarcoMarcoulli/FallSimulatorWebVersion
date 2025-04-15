@@ -3,15 +3,18 @@ import React from 'react';
 import { useCanvasContext } from '../../context/canvas/useCanvasContext';
 import { useInputContext } from '../../context/input/useInputContext';
 import { useStateContext } from '../../context/state/useStateContext';
+
 import { UIStates } from '../../types/UIStates';
 import { Cycloid } from '../../logic/curves/Cycloid';
+
 import { drawCurve } from '../../logic/utils/CurveVisualizer';
+
 import { SimulationManager } from '../../logic/simulation/SimulationManager';
 import { addSimulation } from '../../logic/simulation/Simulations';
 
 const CycloidButton: React.FC = () => {
   const { ctx } = useCanvasContext();
-  const { startPoint, endPoint, g } = useInputContext();
+  const { startPoint, endPoint, intermediatePoints, g } = useInputContext();
   const { setUIState } = useStateContext();
 
   const handleCycloidClick = () => {
@@ -37,7 +40,17 @@ const CycloidButton: React.FC = () => {
     addSimulation(simulation);
 
     const points = simulation.getPoints();
-    drawCurve(points, ctx, cycloid.getRed(), cycloid.getGreen(), cycloid.getBlue());
+
+    drawCurve(
+      points,
+      ctx,
+      startPoint,
+      endPoint,
+      intermediatePoints,
+      cycloid.getRed(),
+      cycloid.getGreen(),
+      cycloid.getBlue()
+    );
 
     setUIState(UIStates.CHOOSING_MASS);
   };
@@ -45,7 +58,7 @@ const CycloidButton: React.FC = () => {
   return (
     <button
       onClick={handleCycloidClick}
-      className="bg-purple-600 text-white px-3 py-1 rounded hover:bg-purple-700"
+      className="bg-green-700 text-white px-3 py-1 rounded hover:bg-green-700"
     >
       Cicloide
     </button>

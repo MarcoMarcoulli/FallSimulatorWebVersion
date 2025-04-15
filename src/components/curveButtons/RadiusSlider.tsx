@@ -1,13 +1,14 @@
 import React from 'react';
-import { useInputContext } from '../context/input/useInputContext';
-import { useCanvasContext } from '../context/canvas/useCanvasContext';
-import { Circle } from '../logic/curves/Circle';
-import { drawCurve, clearLastCurve } from '../logic/utils/CurveVisualizer';
-import { SimulationManager } from '../logic/simulation/SimulationManager';
-import { getSimulations, replaceLastSimulation } from '../logic/simulation/Simulations';
+import { useInputContext } from '../../context/input/useInputContext';
+import { useCanvasContext } from '../../context/canvas/useCanvasContext';
+import { Circle } from '../../logic/curves/Circle';
+import { drawCurve, clearLastCurve } from '../../logic/utils/CurveVisualizer';
+import { SimulationManager } from '../../logic/simulation/SimulationManager';
+import { getSimulations, replaceLastSimulation } from '../../logic/simulation/Simulations';
 
 const RadiusSlider: React.FC = () => {
-  const { startPoint, endPoint, radius, setRadius, convexity } = useInputContext();
+  const { startPoint, endPoint, intermediatePoints, radius, setRadius, convexity } =
+    useInputContext();
   const { ctx } = useCanvasContext();
 
   // Non continuare se mancano i dati
@@ -31,11 +32,20 @@ const RadiusSlider: React.FC = () => {
     const circleSimulation = new SimulationManager(circle);
     replaceLastSimulation(circleSimulation);
 
-    clearLastCurve(ctx);
+    clearLastCurve(ctx, startPoint, endPoint, intermediatePoints);
     getSimulations().forEach((sim) => {
       const pts = sim.getPoints();
       const curve = sim.getCurve();
-      drawCurve(pts, ctx, curve.getRed(), curve.getGreen(), curve.getBlue());
+      drawCurve(
+        pts,
+        ctx,
+        startPoint,
+        endPoint,
+        intermediatePoints,
+        curve.getRed(),
+        curve.getGreen(),
+        curve.getBlue()
+      );
     });
   };
 

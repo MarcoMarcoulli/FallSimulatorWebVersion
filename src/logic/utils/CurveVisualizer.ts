@@ -8,6 +8,9 @@ import { drawStartPoint, drawEndPoint, drawIntermediatePoint } from './PointDraw
 export function drawCurve(
   points: Point[],
   ctx: CanvasRenderingContext2D,
+  startPoint: Point | null,
+  endPoint: Point | null,
+  intermediatePoints: Point[],
   red: number,
   green: number,
   blue: number
@@ -23,6 +26,11 @@ export function drawCurve(
     ctx.lineTo(p2.x, p2.y);
   }
   ctx.stroke();
+
+  // Ridisegna i punti in primo piano
+  if (startPoint) drawStartPoint(ctx, startPoint);
+  if (endPoint) drawEndPoint(ctx, endPoint);
+  intermediatePoints.forEach((pt) => drawIntermediatePoint(ctx, pt));
 }
 
 /**
@@ -46,7 +54,16 @@ export const clearLastCurve = (
     const sim = simulations[i];
     const points = sim.getPoints();
     const curve = sim.getCurve();
-    drawCurve(points, ctx, curve.getRed(), curve.getGreen(), curve.getBlue());
+    drawCurve(
+      points,
+      ctx,
+      startPoint,
+      endPoint,
+      intermediatePoints,
+      curve.getRed(),
+      curve.getGreen(),
+      curve.getBlue()
+    );
   }
 
   // Ridisegna i punti in primo piano

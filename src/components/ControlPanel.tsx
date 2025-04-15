@@ -14,9 +14,9 @@ import CircleButton from './curveButtons/CircleButton';
 import CubicSplineButton from './curveButtons/CubicSplineButton';
 import InsertAnotherCurveButton from './InsertAnotherCurveButton';
 import StartSimulationButton from './StartSimulationButton';
-import ConvexityButtons from './ConvexityButtons';
-import StopIntermediatePointsInsertion from './StopIntermediatePointsInsertionButton';
-import RadiusSlider from './RadiusSlider';
+import ConvexityButtons from './curveButtons/ConvexityButtons';
+import StopIntermediatePointsInsertion from './curveButtons/StopIntermediatePointsInsertionButton';
+import RadiusSlider from './curveButtons/RadiusSlider';
 
 const ControlPanel: React.FC = () => {
   const { UIState } = useStateContext();

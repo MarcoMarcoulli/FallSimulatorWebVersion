@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useCallback } from 'react';
 import { useStateContext } from '../context/state/useStateContext';
 import { useInputContext } from '../context/input/useInputContext';
 import { UIStates } from '../types/UIStates';
@@ -12,15 +12,23 @@ const Canvas: React.FC = () => {
   const { setStartPoint, setEndPoint, addIntermediatePoint } = useInputContext();
   const { setCtx } = useCanvasContext();
 
-  useEffect(() => {
+  // Funzione che aggiorna la dimensione del canvas dinamicamente
+  const resizeCanvas = useCallback(() => {
     const canvas = canvasRef.current;
     if (canvas) {
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
-      const context = canvas.getContext('2d');
-      setCtx(context);
+      canvas.width = canvas.clientWidth;
+      canvas.height = canvas.clientHeight;
+      const ctx = canvas.getContext('2d');
+      if (ctx) setCtx(ctx);
     }
   }, [setCtx]);
+
+  // Al mount e al resize
+  useEffect(() => {
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+    return () => window.removeEventListener('resize', resizeCanvas);
+  }, [resizeCanvas]);
 
   const handleCanvasClick = (event: React.MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
@@ -42,22 +50,14 @@ const Canvas: React.FC = () => {
         break;
 
       case UIStates.WAITING_FOR_END_POINT:
-        try {
-          setEndPoint(point);
-          drawEndPoint(ctx, point);
-          setUIState(UIStates.CHOOSING_CURVE);
-        } catch (error) {
-          console.error(error);
-        }
+        setEndPoint(point);
+        drawEndPoint(ctx, point);
+        setUIState(UIStates.CHOOSING_CURVE);
         break;
 
       case UIStates.INSERTING_INTERMEDIATE_POINTS:
-        try {
-          addIntermediatePoint(point);
-          drawIntermediatePoint(ctx, point);
-        } catch (error) {
-          console.error(error);
-        }
+        addIntermediatePoint(point);
+        drawIntermediatePoint(ctx, point);
         break;
 
       default:
@@ -65,7 +65,7 @@ const Canvas: React.FC = () => {
     }
   };
 
-  return <canvas ref={canvasRef} className="w-full h-full" onClick={handleCanvasClick} />;
+  return <canvas ref={canvasRef} className="w-full h-full block" onClick={handleCanvasClick} />;
 };
 
 export default Canvas;

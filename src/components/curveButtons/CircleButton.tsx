@@ -13,7 +13,7 @@ const CircleButton: React.FC = () => {
   return (
     <button
       onClick={handleCircleClick}
-      className="bg-purple-600 text-white px-3 py-1 rounded hover:bg-purple-700"
+      className="bg-green-700 text-white px-3 py-1 rounded hover:bg-green-700"
     >
       Circonferenza
     </button>

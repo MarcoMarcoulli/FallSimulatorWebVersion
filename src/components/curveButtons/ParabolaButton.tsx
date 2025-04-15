@@ -16,7 +16,7 @@ import { addSimulation } from '../../logic/simulation/Simulations';
 
 const ParabolaButton: React.FC = () => {
   const { ctx } = useCanvasContext();
-  const { startPoint, endPoint, g } = useInputContext();
+  const { startPoint, endPoint, intermediatePoints, g } = useInputContext();
   const { setUIState } = useStateContext();
 
   const handleParabolaClick = () => {
@@ -36,6 +36,9 @@ const ParabolaButton: React.FC = () => {
     drawCurve(
       parabolaSimulation.getPoints(),
       ctx,
+      startPoint,
+      endPoint,
+      intermediatePoints,
       parabola.getRed(),
       parabola.getGreen(),
       parabola.getBlue()
