@@ -4,9 +4,9 @@ import { Curve } from './Curve';
 
 export class Circle extends Curve {
   private r: number;
-  private convexity: number; // 1 per concavità verso l'alto, -1 verso il basso
+  private convexity: 1 | -1; // 1 per concavità verso l'alto, -1 verso il basso
 
-  constructor(startPoint: Point, endPoint: Point, convexity: number, radius?: number) {
+  constructor(startPoint: Point, endPoint: Point, convexity: 1 | -1, radius?: number) {
     super(startPoint, endPoint);
     this.convexity = convexity;
 

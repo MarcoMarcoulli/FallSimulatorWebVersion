@@ -1,28 +1,36 @@
+// src/components/RadiusSlider.tsx
 import React from 'react';
 import { useInputContext } from '../../context/input/useInputContext';
 import { useCanvasContext } from '../../context/canvas/useCanvasContext';
+import { useSimulationContext } from '../../context/simulation/useSimulationContext';
 import { Circle } from '../../logic/curves/Circle';
 import { drawCurve, clearLastCurve } from '../../logic/utils/CurveVisualizer';
 import { SimulationManager } from '../../logic/simulation/SimulationManager';
-import { getSimulations, replaceLastSimulation } from '../../logic/simulation/Simulations';
 
 const RadiusSlider: React.FC = () => {
-  const { startPoint, endPoint, intermediatePoints, radius, setRadius, convexity } =
+  const { startPoint, endPoint, intermediatePoints, radius, setRadius, initialRadius, convexity } =
     useInputContext();
-  const { ctx } = useCanvasContext();
 
-  // Non continuare se mancano i dati
-  if (radius === null || convexity === null || !ctx) return null;
+  const { ctx } = useCanvasContext();
+  const { simulations, replaceLastSimulation } = useSimulationContext();
+
+  if (
+    radius === null ||
+    initialRadius === null ||
+    convexity === null ||
+    !ctx ||
+    !startPoint ||
+    !endPoint
+  )
+    return null;
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newRadius = parseFloat(e.target.value);
     setRadius(newRadius);
 
-    if (!startPoint || !endPoint || !ctx) return;
-
     const circle = new Circle(startPoint, endPoint, convexity, newRadius);
 
-    const previous = getSimulations().at(-1)?.getCurve();
+    const previous = simulations.at(-1)?.getCurve();
     if (previous) {
       circle.setRed(previous.getRed());
       circle.setGreen(previous.getGreen());
@@ -32,8 +40,10 @@ const RadiusSlider: React.FC = () => {
     const circleSimulation = new SimulationManager(circle);
     replaceLastSimulation(circleSimulation);
 
-    clearLastCurve(ctx, startPoint, endPoint, intermediatePoints);
-    getSimulations().forEach((sim) => {
+    clearLastCurve(simulations, ctx, startPoint, endPoint, intermediatePoints);
+    const updatedSimulations = [...simulations.slice(0, -1), circleSimulation];
+
+    updatedSimulations.forEach((sim) => {
       const pts = sim.getPoints();
       const curve = sim.getCurve();
       drawCurve(
@@ -51,13 +61,10 @@ const RadiusSlider: React.FC = () => {
 
   return (
     <div className="w-full mt-4">
-      <label className="block text-sm font-medium text-gray-700 mb-1">
-        Raggio: {radius.toFixed(2)}
-      </label>
       <input
         type="range"
-        min={radius}
-        max={radius * 3}
+        min={initialRadius}
+        max={initialRadius * 3}
         step="0.1"
         value={radius}
         onChange={handleChange}

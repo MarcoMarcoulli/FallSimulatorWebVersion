@@ -13,8 +13,13 @@ export interface InputContextType {
   clearIntermediatePoints: () => void;
   clearInput: () => void;
   setG: (value: number) => void;
+
   radius: number | null;
   setRadius: Dispatch<SetStateAction<number | null>>;
+
+  initialRadius: number | null;
+  setInitialRadius: Dispatch<SetStateAction<number | null>>;
+
   convexity: 1 | -1 | null;
   setConvexity: Dispatch<SetStateAction<1 | -1 | null>>;
 }

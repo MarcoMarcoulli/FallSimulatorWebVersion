@@ -1,5 +1,5 @@
 import { Point } from '../../types/Point';
-import { getSimulations } from '../simulation/Simulations';
+import { SimulationManager } from '../simulation/SimulationManager';
 import { drawStartPoint, drawEndPoint, drawIntermediatePoint } from './PointDrawer';
 
 /**
@@ -38,24 +38,23 @@ export function drawCurve(
  * poi disegna i punti attuali forniti dal context.
  */
 export const clearLastCurve = (
+  simulations: SimulationManager[],
   ctx: CanvasRenderingContext2D,
   startPoint: Point | null,
   endPoint: Point | null,
   intermediatePoints: Point[]
-) => {
-  const simulations = getSimulations();
+): void => {
   if (!ctx) return;
 
-  // Pulisce tutto il canvas
+  // Pulisce il canvas
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
   // Ridisegna tutte le curve tranne l'ultima
   for (let i = 0; i < simulations.length - 1; i++) {
     const sim = simulations[i];
-    const points = sim.getPoints();
     const curve = sim.getCurve();
     drawCurve(
-      points,
+      sim.getPoints(),
       ctx,
       startPoint,
       endPoint,
@@ -72,6 +71,9 @@ export const clearLastCurve = (
   intermediatePoints.forEach((pt) => drawIntermediatePoint(ctx, pt));
 };
 
-export const clearCanvas = (ctx: CanvasRenderingContext2D) => {
+/**
+ * Pulisce completamente il canvas.
+ */
+export const clearCanvas = (ctx: CanvasRenderingContext2D): void => {
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 };

@@ -1,40 +1,40 @@
-// src/components/EndInputButton.tsx
 import React from 'react';
 import { useCanvasContext } from '../../context/canvas/useCanvasContext';
 import { useInputContext } from '../../context/input/useInputContext';
 import { useStateContext } from '../../context/state/useStateContext';
+import { useSimulationContext } from '../../context/simulation/useSimulationContext';
+
 import { UIStates } from '../../types/UIStates';
 import { CubicSpline } from '../../logic/curves/CubicSpline';
 import { drawCurve } from '../../logic/utils/CurveVisualizer';
 import { SimulationManager } from '../../logic/simulation/SimulationManager';
-import { addSimulation } from '../../logic/simulation/Simulations';
 
 const StopIntermediatePointsInsertion: React.FC = () => {
   const { ctx } = useCanvasContext();
-  const { startPoint, endPoint, intermediatePoints, clearIntermediatePoints, g } =
+  const { startPoint, endPoint, intermediatePoints, g, clearIntermediatePoints } =
     useInputContext();
   const { setUIState } = useStateContext();
+  const { addSimulation } = useSimulationContext();
 
-  const handleClick = () => {
+  const handleFinish = () => {
     if (!ctx || !startPoint || !endPoint || g == null) {
-      console.warn('Dati mancanti per la spline');
+      console.warn('Dati mancanti per completare la spline.');
       return;
     }
 
-    // 1. Crea la curva
+    // Crea la curva spline
     const spline = new CubicSpline(startPoint, endPoint, intermediatePoints);
     spline.setRandomColors();
 
-    // 2. Aggiunge simulazione
-    const splineSimulation = new SimulationManager(spline);
-    splineSimulation.setSlopes(spline.calculateSlopes());
-    splineSimulation.calculateTimeParametrization(g);
-    addSimulation(splineSimulation);
+    // Crea simulazione
+    const simulation = new SimulationManager(spline);
+    simulation.setSlopes(spline.calculateSlopes());
+    simulation.calculateTimeParametrization(g);
+    addSimulation(simulation);
 
-    // 3. Disegna curva
-    const points = splineSimulation.getPoints();
+    // Disegna sul canvas
     drawCurve(
-      points,
+      simulation.getPoints(),
       ctx,
       startPoint,
       endPoint,
@@ -44,16 +44,14 @@ const StopIntermediatePointsInsertion: React.FC = () => {
       spline.getBlue()
     );
 
-    // 4. Pulisce i punti intermedi
+    // Pulisce i punti intermedi e avanza allo stato successivo
     clearIntermediatePoints();
-
-    // 5. Cambia stato
     setUIState(UIStates.CHOOSING_MASS);
   };
 
   return (
     <button
-      onClick={handleClick}
+      onClick={handleFinish}
       className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700"
     >
       Fine Immissione

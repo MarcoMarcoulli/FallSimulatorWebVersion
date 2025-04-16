@@ -14,7 +14,12 @@ import leibnitzImg from '../assets/masses/leibnitz.png';
 import bernoulliImg from '../assets/masses/bernoulli.png';
 import jakobImg from '../assets/masses/jakob.png';
 
-const MassSelector: React.FC = () => {
+interface MassSelectorProps {
+  hiddenMasses: Set<string>;
+  onMassSelect: (type: MassIconType) => void;
+}
+
+const MassSelector: React.FC<MassSelectorProps> = ({ hiddenMasses, onMassSelect }) => {
   const { setUIState } = useStateContext();
   const { startPoint } = useInputContext();
   const { simulations, updateLastSimulation } = useSimulationContext();
@@ -27,7 +32,6 @@ const MassSelector: React.FC = () => {
 
     const mass = new Mass(startPoint, iconType, imageSrc);
 
-    // Clona l'ultima simulazione, aggiorna la massa e sostituiscila
     const lastSim = simulations.at(-1);
     if (lastSim) {
       updateLastSimulation((prevSim) => {
@@ -36,36 +40,31 @@ const MassSelector: React.FC = () => {
       });
     }
 
+    onMassSelect(iconType);
     setUIState(UIStates.READY_TO_SIMULATE);
   };
 
+  // Elenco delle masse disponibili
+  const masses = [
+    { type: MassIconType.GALILEO, label: 'GALILEO', img: galileoImg },
+    { type: MassIconType.NEWTON, label: 'NEWTON', img: newtonImg },
+    { type: MassIconType.LEIBNITZ, label: 'LEIBNITZ', img: leibnitzImg },
+    { type: MassIconType.BERNOULLI, label: 'BERNOULLI', img: bernoulliImg },
+    { type: MassIconType.JAKOB, label: 'JAKOB', img: jakobImg },
+  ];
+
   return (
     <div className="flex gap-4 flex-wrap">
-      <MassButton
-        imageSrc={galileoImg}
-        label="GALILEO"
-        onClick={() => handleMassSelection(MassIconType.GALILEO, galileoImg)}
-      />
-      <MassButton
-        imageSrc={newtonImg}
-        label="NEWTON"
-        onClick={() => handleMassSelection(MassIconType.NEWTON, newtonImg)}
-      />
-      <MassButton
-        imageSrc={leibnitzImg}
-        label="LEIBNITZ"
-        onClick={() => handleMassSelection(MassIconType.LEIBNITZ, leibnitzImg)}
-      />
-      <MassButton
-        imageSrc={bernoulliImg}
-        label="BERNOULLI"
-        onClick={() => handleMassSelection(MassIconType.BERNOULLI, bernoulliImg)}
-      />
-      <MassButton
-        imageSrc={jakobImg}
-        label="JAKOB"
-        onClick={() => handleMassSelection(MassIconType.JAKOB, jakobImg)}
-      />
+      {masses
+        .filter((mass) => !hiddenMasses.has(mass.type))
+        .map((mass) => (
+          <MassButton
+            key={mass.type}
+            imageSrc={mass.img}
+            label={mass.label}
+            onClick={() => handleMassSelection(mass.type, mass.img)}
+          />
+        ))}
     </div>
   );
 };

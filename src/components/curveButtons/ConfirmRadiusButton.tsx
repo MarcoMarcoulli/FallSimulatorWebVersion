@@ -1,26 +1,28 @@
-// src/components/ConfirmRadiusButton.tsx
 import React from 'react';
 import { useInputContext } from '../../context/input/useInputContext';
 import { useStateContext } from '../../context/state/useStateContext';
+import { useSimulationContext } from '../../context/simulation/useSimulationContext';
 import { UIStates } from '../../types/UIStates';
-import { lastSimulation } from '../../logic/simulation/Simulations';
 
 const ConfirmRadiusButton: React.FC = () => {
   const { g } = useInputContext();
   const { setUIState } = useStateContext();
+  const { simulations, updateLastSimulation } = useSimulationContext();
 
   const handleClick = () => {
-    const simulation = lastSimulation();
+    const lastSim = simulations.at(-1);
 
-    if (!simulation || g === null) {
+    if (!lastSim || g === null) {
       console.warn('Dati insufficienti per confermare il raggio.');
       return;
     }
 
-    simulation.setSlopes(simulation.getCurve().calculateSlopes());
-    simulation.calculateTimeParametrization(g);
+    updateLastSimulation((prevSim) => {
+      prevSim.setSlopes(prevSim.getCurve().calculateSlopes());
+      prevSim.calculateTimeParametrization(g);
+      return prevSim;
+    });
 
-    // Passa allo stato di scelta della massa
     setUIState(UIStates.CHOOSING_MASS);
   };
 

@@ -5,7 +5,7 @@ export class Mass {
   private position: Point;
   private iconType: MassIconType;
   private imageUrl: string;
-  static readonly MASS_DIAMETER = 40;
+  static readonly MASS_DIAMETER = 50;
 
   constructor(startPosition: Point, iconType: MassIconType, imageSrc: string) {
     this.position = startPosition;

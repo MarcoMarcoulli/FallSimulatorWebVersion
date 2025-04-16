@@ -6,7 +6,15 @@ import { useSimulationContext } from '../context/simulation/useSimulationContext
 import { useCanvasContext } from '../context/canvas/useCanvasContext';
 import { clearCanvas } from '../logic/utils/CurveVisualizer';
 
-const CancelInputButton: React.FC = () => {
+interface CancelInputButtonProps {
+  resetButtonsVisibility: () => void;
+  resetMasses: () => void;
+}
+
+const CancelInputButton: React.FC<CancelInputButtonProps> = ({
+  resetButtonsVisibility,
+  resetMasses,
+}) => {
   const { clearInput } = useInputContext();
 
   const { setUIState } = useStateContext();
@@ -15,9 +23,11 @@ const CancelInputButton: React.FC = () => {
 
   const handleCancelInputClick = () => {
     clearInput(); // reset input
-    clearSimulations(); // reset simulazioni
+    clearSimulations();
     clearCanvas(ctx!);
-    setUIState(UIStates.CHOOSING_GRAVITY); // torna allo stato iniziale
+    resetButtonsVisibility();
+    resetMasses();
+    setUIState(UIStates.CHOOSING_GRAVITY);
   };
 
   return (

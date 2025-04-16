@@ -1,21 +1,24 @@
-// src/components/CycloidButton.tsx
 import React from 'react';
 import { useCanvasContext } from '../../context/canvas/useCanvasContext';
 import { useInputContext } from '../../context/input/useInputContext';
 import { useStateContext } from '../../context/state/useStateContext';
+import { useSimulationContext } from '../../context/simulation/useSimulationContext';
 
 import { UIStates } from '../../types/UIStates';
 import { Cycloid } from '../../logic/curves/Cycloid';
 
 import { drawCurve } from '../../logic/utils/CurveVisualizer';
-
 import { SimulationManager } from '../../logic/simulation/SimulationManager';
-import { addSimulation } from '../../logic/simulation/Simulations';
 
-const CycloidButton: React.FC = () => {
+interface ParabolaButtonProps {
+  onClick?: () => void;
+}
+
+const CycloidButton: React.FC<ParabolaButtonProps> = ({ onClick }) => {
   const { ctx } = useCanvasContext();
   const { startPoint, endPoint, intermediatePoints, g } = useInputContext();
   const { setUIState } = useStateContext();
+  const { addSimulation } = useSimulationContext();
 
   const handleCycloidClick = () => {
     if (!startPoint || !endPoint || !ctx || g === null) {
@@ -28,7 +31,6 @@ const CycloidButton: React.FC = () => {
       cycloid = new Cycloid(startPoint, endPoint);
     } catch (error) {
       console.error('Errore nella creazione della cicloide:', error);
-      // Puoi anche mostrare un messaggio visivo se vuoi bloccare l’utente per qualche secondo
       return;
     }
 
@@ -39,10 +41,8 @@ const CycloidButton: React.FC = () => {
     simulation.calculateTimeParametrization(g);
     addSimulation(simulation);
 
-    const points = simulation.getPoints();
-
     drawCurve(
-      points,
+      simulation.getPoints(),
       ctx,
       startPoint,
       endPoint,
@@ -53,12 +53,13 @@ const CycloidButton: React.FC = () => {
     );
 
     setUIState(UIStates.CHOOSING_MASS);
+    if (onClick) onClick();
   };
 
   return (
     <button
       onClick={handleCycloidClick}
-      className="bg-green-700 text-white px-3 py-1 rounded hover:bg-green-700"
+      className="bg-green-700 text-white px-3 py-1 rounded hover:bg-green-800"
     >
       Cicloide
     </button>

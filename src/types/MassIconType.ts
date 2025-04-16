@@ -1,8 +1,8 @@
 // Enumerazione dei pianeti
 export enum MassIconType {
-  GALILEO,
-  NEWTON,
-  LEIBNITZ,
-  BERNOULLI,
-  JAKOB,
+  GALILEO = 'GALILEO',
+  NEWTON = 'NEWTON',
+  LEIBNITZ = 'LEIBNITZ',
+  BERNOULLI = 'BERNOULLI',
+  JAKOB = 'JAKOB',
 }

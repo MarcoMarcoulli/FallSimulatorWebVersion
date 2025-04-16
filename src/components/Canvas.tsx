@@ -5,14 +5,26 @@ import { UIStates } from '../types/UIStates';
 import { Point } from '../types/Point';
 import { useCanvasContext } from '../context/canvas/useCanvasContext';
 import { drawStartPoint, drawEndPoint, drawIntermediatePoint } from '../logic/utils/PointDrawer';
+import { validateEndPoint, validateIntermediatePoint } from '../logic/utils/InputValidator';
 
-const Canvas: React.FC = () => {
+interface CanvasProps {
+  showModal: (msg: string) => void;
+}
+
+const Canvas: React.FC<CanvasProps> = ({ showModal }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { UIState, setUIState } = useStateContext();
-  const { setStartPoint, setEndPoint, addIntermediatePoint } = useInputContext();
+  const {
+    setStartPoint,
+    startPoint,
+    endPoint,
+    intermediatePoints,
+    setEndPoint,
+    addIntermediatePoint,
+  } = useInputContext();
   const { setCtx } = useCanvasContext();
 
-  // Funzione che aggiorna la dimensione del canvas dinamicamente
+  // Resize dinamico del canvas
   const resizeCanvas = useCallback(() => {
     const canvas = canvasRef.current;
     if (canvas) {
@@ -23,7 +35,6 @@ const Canvas: React.FC = () => {
     }
   }, [setCtx]);
 
-  // Al mount e al resize
   useEffect(() => {
     resizeCanvas();
     window.addEventListener('resize', resizeCanvas);
@@ -49,16 +60,30 @@ const Canvas: React.FC = () => {
         setUIState(UIStates.WAITING_FOR_END_POINT);
         break;
 
-      case UIStates.WAITING_FOR_END_POINT:
-        setEndPoint(point);
-        drawEndPoint(ctx, point);
+      case UIStates.WAITING_FOR_END_POINT: {
+        if (!startPoint) return;
+        const validated = validateEndPoint(startPoint, point, showModal);
+        if (!validated) return;
+        setEndPoint(validated);
+        drawEndPoint(ctx, validated);
         setUIState(UIStates.CHOOSING_CURVE);
         break;
+      }
 
-      case UIStates.INSERTING_INTERMEDIATE_POINTS:
-        addIntermediatePoint(point);
-        drawIntermediatePoint(ctx, point);
+      case UIStates.INSERTING_INTERMEDIATE_POINTS: {
+        if (!startPoint || !endPoint) return;
+        const validated = validateIntermediatePoint(
+          startPoint,
+          endPoint,
+          point,
+          intermediatePoints,
+          showModal
+        );
+        if (!validated) return;
+        addIntermediatePoint(validated);
+        drawIntermediatePoint(ctx, validated);
         break;
+      }
 
       default:
         break;

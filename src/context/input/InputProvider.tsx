@@ -1,14 +1,19 @@
 import React, { useState } from 'react';
 import { Point } from '../../types/Point';
-import { validateEndPoint, validateIntermediatePoint } from '../../logic/utils/InputValidator';
 import { InputContext } from './InputContext';
 
-export const InputProvider = ({ children }: { children: React.ReactNode }) => {
+interface InputProviderProps {
+  children: React.ReactNode;
+}
+
+export const InputProvider: React.FC<InputProviderProps> = ({ children }) => {
   const [startPoint, setStartPointState] = useState<Point | null>(null);
   const [endPoint, setEndPointState] = useState<Point | null>(null);
   const [intermediatePoints, setIntermediatePointsState] = useState<Point[]>([]);
   const [g, setG] = useState<number>(0);
+
   const [radius, setRadius] = useState<number | null>(null);
+  const [initialRadius, setInitialRadius] = useState<number | null>(null);
   const [convexity, setConvexity] = useState<1 | -1 | null>(null);
 
   const setStartPoint = (pt: Point) => {
@@ -17,21 +22,11 @@ export const InputProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const setEndPoint = (pt: Point) => {
-    if (!startPoint) return;
-
-    const validated = validateEndPoint(startPoint, pt);
-    if (!validated) return;
-
-    setEndPointState(validated);
+    setEndPointState(pt);
   };
 
   const addIntermediatePoint = (pt: Point) => {
-    if (!startPoint || !endPoint) return;
-
-    const validated = validateIntermediatePoint(startPoint, endPoint, pt, intermediatePoints);
-    if (!validated) return;
-
-    setIntermediatePointsState([...intermediatePoints, validated]);
+    setIntermediatePointsState([...intermediatePoints, pt]);
   };
 
   const clearIntermediatePoints = () => setIntermediatePointsState([]);
@@ -41,6 +36,7 @@ export const InputProvider = ({ children }: { children: React.ReactNode }) => {
     setEndPointState(null);
     clearIntermediatePoints();
     setRadius(null);
+    setInitialRadius(null);
     setConvexity(null);
   };
 
@@ -59,6 +55,8 @@ export const InputProvider = ({ children }: { children: React.ReactNode }) => {
         setG,
         radius,
         setRadius,
+        initialRadius,
+        setInitialRadius,
         convexity,
         setConvexity,
       }}

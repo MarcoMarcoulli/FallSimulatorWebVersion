@@ -1,5 +1,5 @@
 // src/components/ControlPanel.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import { useStateContext } from '../context/state/useStateContext';
 import { UIStates } from '../types/UIStates';
 
@@ -8,18 +8,35 @@ import MessageDisplay from './MessageDisplay';
 import PlanetSelector from './PlanetSelector';
 import MassSelector from './MassSelector';
 import CancelInputButton from './CancelInputButton';
-import ParabolaButton from './curveButtons/ParabolaButton';
-import CycloidButton from './curveButtons/CycloidButton';
-import CircleButton from './curveButtons/CircleButton';
-import CubicSplineButton from './curveButtons/CubicSplineButton';
+import CurveSelector from './CurveSelector';
 import InsertAnotherCurveButton from './InsertAnotherCurveButton';
 import StartSimulationButton from './StartSimulationButton';
 import ConvexityButtons from './curveButtons/ConvexityButtons';
 import StopIntermediatePointsInsertion from './curveButtons/StopIntermediatePointsInsertionButton';
 import RadiusSlider from './curveButtons/RadiusSlider';
+import ConfirmRadiusButton from './curveButtons/ConfirmRadiusButton';
+import { MassIconType } from '../types/MassIconType';
 
 const ControlPanel: React.FC = () => {
   const { UIState } = useStateContext();
+
+  const [showParabola, setShowParabola] = useState(true);
+  const [showCycloid, setShowCycloid] = useState(true);
+
+  const resetButtonsVisibility = () => {
+    setShowParabola(true);
+    setShowCycloid(true);
+  };
+
+  const [hiddenMasses, setHiddenMasses] = useState<Set<string>>(new Set());
+
+  const hideMass = (type: MassIconType) => {
+    setHiddenMasses((prev) => new Set(prev).add(type));
+  };
+
+  const resetMasses = () => setHiddenMasses(new Set());
+
+  const allMassesUsed = hiddenMasses.size === Object.keys(MassIconType).length;
 
   return (
     <div className="flex flex-col gap-4 p-4">
@@ -28,19 +45,21 @@ const ControlPanel: React.FC = () => {
       {UIState === UIStates.CHOOSING_GRAVITY && <PlanetSelector />}
 
       {UIState === UIStates.CHOOSING_CURVE && (
-        <>
-          <ParabolaButton />
-          <CycloidButton />
-          <CircleButton />
-          <CubicSplineButton />
-        </>
+        <CurveSelector
+          showParabola={showParabola}
+          setShowParabola={setShowParabola}
+          showCycloid={showCycloid}
+          setShowCycloid={setShowCycloid}
+        />
       )}
 
-      {UIState === UIStates.CHOOSING_MASS && <MassSelector />}
+      {UIState === UIStates.CHOOSING_MASS && (
+        <MassSelector hiddenMasses={hiddenMasses} onMassSelect={hideMass} />
+      )}
 
       {UIState === UIStates.READY_TO_SIMULATE && (
         <>
-          <InsertAnotherCurveButton />
+          {!allMassesUsed && <InsertAnotherCurveButton />}
           <StartSimulationButton />
         </>
       )}
@@ -57,10 +76,16 @@ const ControlPanel: React.FC = () => {
       {UIState === UIStates.CHOOSING_RADIUS && (
         <>
           <RadiusSlider />
+          <ConfirmRadiusButton />
         </>
       )}
 
-      {UIState !== UIStates.CHOOSING_GRAVITY && <CancelInputButton />}
+      {UIState !== UIStates.CHOOSING_GRAVITY && (
+        <CancelInputButton
+          resetButtonsVisibility={resetButtonsVisibility}
+          resetMasses={resetMasses}
+        />
+      )}
     </div>
   );
 };
