@@ -26,7 +26,9 @@ export const InputProvider: React.FC<InputProviderProps> = ({ children }) => {
   };
 
   const addIntermediatePoint = (pt: Point) => {
-    setIntermediatePointsState([...intermediatePoints, pt]);
+    const updatedPoints = [...intermediatePoints, pt];
+    updatedPoints.sort((a, b) => a.x - b.x);
+    setIntermediatePointsState(updatedPoints);
   };
 
   const clearIntermediatePoints = () => setIntermediatePointsState([]);

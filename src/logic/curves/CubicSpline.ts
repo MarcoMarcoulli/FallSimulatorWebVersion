@@ -1,91 +1,74 @@
 // src/logic/curves/CubicSpline.ts
+
 import { Curve } from './Curve';
 import { Point } from '../../types/Point';
-import Spline from 'natural-spline-interpolator';
+import createSpline from 'natural-spline-interpolator';
 
 export class CubicSpline extends Curve {
   private splineFunction: ((x: number) => number) | null = null;
-  private interpolationPoints: Point[];
+  private readonly interpolationPoints: Point[];
 
   constructor(startPoint: Point, endPoint: Point, intermediatePoints: Point[]) {
     super(startPoint, endPoint);
 
-    const n = intermediatePoints.length + 2;
-    this.interpolationPoints = new Array<Point>(n);
-    this.interpolationPoints[0] = startPoint;
+    // Ordina i punti per x
+    this.interpolationPoints = [startPoint, ...intermediatePoints, endPoint].sort(
+      (a, b) => a.x - b.x
+    );
 
-    for (let i = 1; i < n - 1; i++) {
-      this.interpolationPoints[i] = intermediatePoints[i - 1];
-    }
+    const pairs = this.interpolationPoints.map((p) => [p.x, p.y]) as [number, number][];
 
-    this.interpolationPoints[n - 1] = endPoint;
-
-    // Ordina per x crescente
-    this.interpolationPoints.sort((a, b) => a.x - b.x);
-
-    const x = this.interpolationPoints.map((p) => p.x);
-    const y = this.interpolationPoints.map((p) => p.y);
-
-    if (this.interpolationPoints.length > 2) {
-      const spline = new Spline(x, y);
-      this.splineFunction = (xval: number) => spline.at(xval);
-    } else {
-      this.splineFunction = null;
+    if (pairs.length >= 3) {
+      try {
+        this.splineFunction = createSpline(pairs);
+      } catch (err) {
+        console.error('Errore nella creazione della spline:', err);
+      }
     }
   }
 
+  /** Valuta la y corrispondente a *x* sulla curva */
   public evaluateY(x: number): number {
     if (!this.splineFunction) {
+      // fallback lineare se la spline non è disponibile
       const m = this.intervalY / this.intervalX;
       return m * (x - this.startPoint.x) + this.startPoint.y;
-    } else {
-      return this.splineFunction(x);
     }
+    return this.splineFunction(x);
   }
 
+  /** Genera i punti disegnabili sul canvas */
   public calculatePoints(): Point[] {
-    const points: Point[] = new Array(Curve.NUMPOINTS);
-    let t: number, xCubic: number, x: number, y: number;
-
+    const pts: Point[] = new Array(Curve.NUMPOINTS);
     for (let i = 0; i < Curve.NUMPOINTS - 1; i++) {
-      t = i / (Curve.NUMPOINTS - 1);
-      xCubic = this.intervalX * Math.pow(t, 3);
-      x = this.startPoint.x + xCubic;
-      y = this.evaluateY(x);
-      points[i] = { x, y };
+      const t = i / (Curve.NUMPOINTS - 1);
+      const x = this.startPoint.x + this.intervalX * t ** 3;
+      const y = this.evaluateY(x);
+      pts[i] = { x, y };
     }
-
-    points[Curve.NUMPOINTS - 1] = this.endPoint;
-    return points;
+    pts[Curve.NUMPOINTS - 1] = this.endPoint;
+    return pts;
   }
 
+  /** Calcola le pendenze della curva (serve alla simulazione) */
   public calculateSlopes(): number[] {
-    const slopes: number[] = new Array(Curve.NUMPOINTS);
+    const slopes = new Array<number>(Curve.NUMPOINTS);
 
     if (!this.splineFunction) {
       const m = this.intervalY / this.intervalX;
       const angle = Math.atan(m);
-      for (let i = 0; i < Curve.NUMPOINTS; i++) {
-        slopes[i] = angle;
-      }
+      slopes.fill(angle);
       return slopes;
     }
 
-    // Derivata numerica approssimata
-    const h = 0.0001;
+    const h = 1e-4;
     for (let i = 0; i < Curve.NUMPOINTS - 1; i++) {
       const t = i / (Curve.NUMPOINTS - 1);
-      const xCubic = this.intervalX * Math.pow(t, 3);
-      const x = this.startPoint.x + xCubic;
-
+      const x = this.startPoint.x + this.intervalX * t ** 3;
       const y1 = this.evaluateY(x - h);
       const y2 = this.evaluateY(x + h);
-      const derivative = (y2 - y1) / (2 * h);
-
-      slopes[i] = Math.atan(derivative);
+      slopes[i] = Math.atan((y2 - y1) / (2 * h));
     }
-
-    // Ultima pendenza uguale alla penultima
     slopes[Curve.NUMPOINTS - 1] = slopes[Curve.NUMPOINTS - 2];
     return slopes;
   }

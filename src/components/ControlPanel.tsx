@@ -9,7 +9,7 @@ import PlanetSelector from './PlanetSelector';
 import MassSelector from './MassSelector';
 import CancelInputButton from './CancelInputButton';
 import CurveSelector from './CurveSelector';
-import InsertAnotherCurveButton from './InsertAnotherCurveButton';
+import InsertAnotherCurveButton from './curveButtons/InsertAnotherCurveButton';
 import StartSimulationButton from './StartSimulationButton';
 import ConvexityButtons from './curveButtons/ConvexityButtons';
 import StopIntermediatePointsInsertion from './curveButtons/StopIntermediatePointsInsertionButton';

@@ -1,7 +1,7 @@
 // src/components/InsertAnotherCurveButton.tsx
 import React from 'react';
-import { useStateContext } from '../context/state/useStateContext';
-import { UIStates } from '../types/UIStates';
+import { useStateContext } from '../../context/state/useStateContext';
+import { UIStates } from '../../types/UIStates';
 
 const InsertAnotherCurveButton: React.FC = () => {
   const { setUIState } = useStateContext();

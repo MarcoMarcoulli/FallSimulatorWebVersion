@@ -25,10 +25,7 @@ export function drawEndPoint(ctx: CanvasRenderingContext2D, point: Point) {
  * Disegna un punto intermedio con colore casuale.
  */
 export function drawIntermediatePoint(ctx: CanvasRenderingContext2D, point: Point) {
-  const r = Math.floor(Math.random() * 256);
-  const g = Math.floor(Math.random() * 256);
-  const b = Math.floor(Math.random() * 256);
-  ctx.fillStyle = `rgb(${r},${g},${b})`;
+  ctx.fillStyle = 'green';
   ctx.beginPath();
   ctx.arc(point.x, point.y, 6, 0, 2 * Math.PI);
   ctx.fill();

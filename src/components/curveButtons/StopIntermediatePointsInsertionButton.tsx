@@ -44,8 +44,8 @@ const StopIntermediatePointsInsertion: React.FC = () => {
       spline.getBlue()
     );
 
-    // Pulisce i punti intermedi e avanza allo stato successivo
     clearIntermediatePoints();
+
     setUIState(UIStates.CHOOSING_MASS);
   };
 
