@@ -17,28 +17,30 @@ interface ParabolaButtonProps {
 }
 
 const ParabolaButton: React.FC<ParabolaButtonProps> = ({ onClick }) => {
-  const { ctx } = useCanvasContext();
+  const { ctxRef } = useCanvasContext();
   const { startPoint, endPoint, intermediatePoints, g } = useInputContext();
   const { setUIState } = useStateContext();
   const { addSimulation } = useSimulationContext();
 
   const handleParabolaClick = () => {
-    if (!startPoint || !endPoint || !ctx || g === null) {
+    if (!startPoint || !endPoint || !ctxRef || g === null) {
       console.warn('Dati mancanti per creare la parabola.');
       return;
     }
+
+    if (!ctxRef.current) return;
 
     const parabola = new Parabola(startPoint, endPoint);
     parabola.setRandomColors();
 
     const parabolaSimulation = new SimulationManager(parabola);
-    parabolaSimulation.setSlopes(parabola.calculateSlopes());
+    parabolaSimulation.Slopes = parabola.calculateSlopes();
     parabolaSimulation.calculateTimeParametrization(g);
     addSimulation(parabolaSimulation);
 
     drawCurve(
-      parabolaSimulation.getPoints(),
-      ctx,
+      parabolaSimulation.Points,
+      ctxRef.current,
       startPoint,
       endPoint,
       intermediatePoints,

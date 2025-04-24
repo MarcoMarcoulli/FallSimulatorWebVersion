@@ -15,28 +15,26 @@ import ConvexityButtons from './curveButtons/ConvexityButtons';
 import StopIntermediatePointsInsertion from './curveButtons/StopIntermediatePointsInsertionButton';
 import RadiusSlider from './curveButtons/RadiusSlider';
 import ConfirmRadiusButton from './curveButtons/ConfirmRadiusButton';
-import { MassIconType } from '../types/MassIconType';
+import { MassIconType, MASS_ICONS } from '../types/MassIconType';
 
 const ControlPanel: React.FC = () => {
   const { UIState } = useStateContext();
-
   const [showParabola, setShowParabola] = useState(true);
   const [showCycloid, setShowCycloid] = useState(true);
+  const [hiddenMasses, setHiddenMasses] = useState<Set<MassIconType>>(new Set());
 
   const resetButtonsVisibility = () => {
     setShowParabola(true);
     setShowCycloid(true);
   };
 
-  const [hiddenMasses, setHiddenMasses] = useState<Set<string>>(new Set());
-
-  const hideMass = (type: MassIconType) => {
-    setHiddenMasses((prev) => new Set(prev).add(type));
+  const hideMass = (mass: MassIconType) => {
+    setHiddenMasses((prev) => new Set(prev).add(mass));
   };
 
   const resetMasses = () => setHiddenMasses(new Set());
 
-  const allMassesUsed = hiddenMasses.size === Object.keys(MassIconType).length;
+  const allMassesUsed = hiddenMasses.size === MASS_ICONS.length;
 
   return (
     <div className="flex flex-col gap-4 p-4">
@@ -57,13 +55,6 @@ const ControlPanel: React.FC = () => {
         <MassSelector hiddenMasses={hiddenMasses} onMassSelect={hideMass} />
       )}
 
-      {UIState === UIStates.READY_TO_SIMULATE && (
-        <>
-          {!allMassesUsed && <InsertAnotherCurveButton />}
-          <StartSimulationButton />
-        </>
-      )}
-
       {UIState === UIStates.CHOOSING_CONVEXITY && (
         <>
           <ConvexityButtons convexity={1} />
@@ -77,6 +68,13 @@ const ControlPanel: React.FC = () => {
         <>
           <RadiusSlider />
           <ConfirmRadiusButton />
+        </>
+      )}
+
+      {UIState === UIStates.READY_TO_SIMULATE && (
+        <>
+          {!allMassesUsed && <InsertAnotherCurveButton />}
+          <StartSimulationButton />
         </>
       )}
 

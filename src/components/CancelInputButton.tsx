@@ -1,3 +1,4 @@
+// src/components/CancelInputButton.tsx
 import React from 'react';
 import { useInputContext } from '../context/input/useInputContext';
 import { useStateContext } from '../context/state/useStateContext';
@@ -16,17 +17,30 @@ const CancelInputButton: React.FC<CancelInputButtonProps> = ({
   resetMasses,
 }) => {
   const { clearInput } = useInputContext();
-
   const { setUIState } = useStateContext();
   const { clearSimulations } = useSimulationContext();
-  const { ctx } = useCanvasContext();
+  const { ctxRef, animationRef } = useCanvasContext();
 
   const handleCancelInputClick = () => {
-    clearInput(); // reset input
+    /* 1. reset logica */
+    clearInput();
     clearSimulations();
-    clearCanvas(ctx!);
+
+    if (!ctxRef.current) return;
+    /* 2. pulisci canvas curve/punti */
+    if (ctxRef) clearCanvas(ctxRef.current);
+
+    if (animationRef!.current) {
+      while (animationRef!.current.firstChild) {
+        animationRef!.current.removeChild(animationRef!.current.firstChild);
+      }
+    }
+
+    /* 4. eventuali altre UI */
     resetButtonsVisibility();
     resetMasses();
+
+    /* 5. torna allo stato iniziale */
     setUIState(UIStates.CHOOSING_GRAVITY);
   };
 

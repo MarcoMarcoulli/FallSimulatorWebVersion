@@ -16,12 +16,13 @@ interface ConvexityButtonProps {
 const ConvexityButton: React.FC<ConvexityButtonProps> = ({ convexity }) => {
   const { startPoint, endPoint, intermediatePoints, g } = useInputContext();
   const { setRadius, setConvexity, setInitialRadius } = useInputContext();
-  const { ctx } = useCanvasContext();
+  const { ctxRef } = useCanvasContext();
   const { setUIState } = useStateContext();
   const { addSimulation } = useSimulationContext();
 
   const handleClick = () => {
-    if (!startPoint || !endPoint || !ctx) return;
+    if (!startPoint || !endPoint || !ctxRef) return;
+    if (!ctxRef.current) return;
 
     // Crea la curva
     const circle = new Circle(startPoint, endPoint, convexity);
@@ -29,14 +30,14 @@ const ConvexityButton: React.FC<ConvexityButtonProps> = ({ convexity }) => {
 
     // Prepara la simulazione
     const sim = new SimulationManager(circle);
-    sim.setSlopes(circle.calculateSlopes());
+    sim.Slopes = circle.calculateSlopes();
     sim.calculateTimeParametrization(g);
     addSimulation(sim);
 
     // Disegna la curva sul canvas
     drawCurve(
-      sim.getPoints(),
-      ctx,
+      sim.Points,
+      ctxRef.current,
       startPoint,
       endPoint,
       intermediatePoints,

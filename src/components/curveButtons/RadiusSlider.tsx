@@ -11,14 +11,14 @@ const RadiusSlider: React.FC = () => {
   const { startPoint, endPoint, intermediatePoints, radius, setRadius, initialRadius, convexity } =
     useInputContext();
 
-  const { ctx } = useCanvasContext();
+  const { ctxRef } = useCanvasContext();
   const { simulations, replaceLastSimulation } = useSimulationContext();
 
   if (
     radius === null ||
     initialRadius === null ||
     convexity === null ||
-    !ctx ||
+    !ctxRef ||
     !startPoint ||
     !endPoint
   )
@@ -30,7 +30,7 @@ const RadiusSlider: React.FC = () => {
 
     const circle = new Circle(startPoint, endPoint, convexity, newRadius);
 
-    const previous = simulations.at(-1)?.getCurve();
+    const previous = simulations.at(-1)?.Curve;
     if (previous) {
       circle.setRed(previous.getRed());
       circle.setGreen(previous.getGreen());
@@ -40,15 +40,20 @@ const RadiusSlider: React.FC = () => {
     const circleSimulation = new SimulationManager(circle);
     replaceLastSimulation(circleSimulation);
 
-    clearLastCurve(simulations, ctx, startPoint, endPoint, intermediatePoints);
+    if (!ctxRef.current) return;
+
+    clearLastCurve(simulations, ctxRef.current, startPoint, endPoint, intermediatePoints);
     const updatedSimulations = [...simulations.slice(0, -1), circleSimulation];
 
     updatedSimulations.forEach((sim) => {
-      const pts = sim.getPoints();
-      const curve = sim.getCurve();
+      const pts = sim.Points;
+      const curve = sim.Curve;
+
+      if (!ctxRef.current) return;
+
       drawCurve(
         pts,
-        ctx,
+        ctxRef.current,
         startPoint,
         endPoint,
         intermediatePoints,

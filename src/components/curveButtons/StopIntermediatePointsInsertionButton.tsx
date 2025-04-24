@@ -10,17 +10,19 @@ import { drawCurve } from '../../logic/utils/CurveVisualizer';
 import { SimulationManager } from '../../logic/simulation/SimulationManager';
 
 const StopIntermediatePointsInsertion: React.FC = () => {
-  const { ctx } = useCanvasContext();
+  const { ctxRef } = useCanvasContext();
   const { startPoint, endPoint, intermediatePoints, g, clearIntermediatePoints } =
     useInputContext();
   const { setUIState } = useStateContext();
   const { addSimulation } = useSimulationContext();
 
   const handleFinish = () => {
-    if (!ctx || !startPoint || !endPoint || g == null) {
+    if (!ctxRef || !startPoint || !endPoint || g == null) {
       console.warn('Dati mancanti per completare la spline.');
       return;
     }
+
+    if (!ctxRef.current) return;
 
     // Crea la curva spline
     const spline = new CubicSpline(startPoint, endPoint, intermediatePoints);
@@ -28,14 +30,14 @@ const StopIntermediatePointsInsertion: React.FC = () => {
 
     // Crea simulazione
     const simulation = new SimulationManager(spline);
-    simulation.setSlopes(spline.calculateSlopes());
+    simulation.Slopes = spline.calculateSlopes();
     simulation.calculateTimeParametrization(g);
     addSimulation(simulation);
 
     // Disegna sul canvas
     drawCurve(
-      simulation.getPoints(),
-      ctx,
+      simulation.Points,
+      ctxRef.current,
       startPoint,
       endPoint,
       intermediatePoints,

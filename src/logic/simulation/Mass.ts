@@ -2,42 +2,43 @@ import { Point } from '../../types/Point';
 import { MassIconType } from '../../types/MassIconType';
 
 export class Mass {
+  private static readonly DIAMETER: number = 40;
   private position: Point;
-  private iconType: MassIconType;
-  private imageUrl: string;
-  static readonly MASS_DIAMETER = 50;
+  private readonly iconType: MassIconType;
+  private readonly img: HTMLImageElement;
 
-  constructor(startPosition: Point, iconType: MassIconType, imageSrc: string) {
-    this.position = startPosition;
+  constructor(startPos: Point, iconType: MassIconType, imgSrc: string) {
+    this.position = startPos;
     this.iconType = iconType;
-    this.imageUrl = imageSrc;
+    this.img = new Image();
+    this.img.src = imgSrc;
+    this.img.width = Mass.DIAMETER;
+    this.img.height = Mass.DIAMETER;
+    this.img.style.position = 'absolute';
+    this.updateDomPosition();
   }
 
-  getCurrentPosition(): Point {
-    return this.position;
+  // ——— getter ———
+  get element(): HTMLImageElement {
+    return this.img;
   }
-
-  setCurrentPosition(newPosition: Point): void {
-    this.position = newPosition;
-  }
-
-  getMassDiameter(): number {
-    return Mass.MASS_DIAMETER;
-  }
-
-  getXCentered(): number {
-    return this.position.x - Mass.MASS_DIAMETER / 2;
-  }
-
-  getYCentered(): number {
-    return this.position.y - Mass.MASS_DIAMETER / 2;
-  }
-
-  getIconType(): MassIconType {
+  get iconTypeValue(): MassIconType {
     return this.iconType;
   }
+  get Position() {
+    return this.position;
+  }
+  static get diameter() {
+    return Mass.DIAMETER;
+  }
 
-  getImageUrl(): string {
-    return this.imageUrl;
+  set Position(p: Point) {
+    this.position = p;
+    this.updateDomPosition();
+  }
+
+  private updateDomPosition() {
+    this.img.style.left = `${this.position.x - Mass.DIAMETER / 2}px`;
+    this.img.style.top = `${this.position.y - Mass.DIAMETER / 2}px`;
   }
 }

@@ -14,6 +14,7 @@ interface CanvasProps {
 const Canvas: React.FC<CanvasProps> = ({ showModal }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { UIState, setUIState } = useStateContext();
+  const { ctxRef } = useCanvasContext();
   const {
     setStartPoint,
     startPoint,
@@ -22,18 +23,20 @@ const Canvas: React.FC<CanvasProps> = ({ showModal }) => {
     setEndPoint,
     addIntermediatePoint,
   } = useInputContext();
-  const { setCtx } = useCanvasContext();
 
-  // Resize dinamico del canvas
+  // funzione per ridimensionare il canvas e aggiornare ctxRef
   const resizeCanvas = useCallback(() => {
     const canvas = canvasRef.current;
-    if (canvas) {
-      canvas.width = canvas.clientWidth;
-      canvas.height = canvas.clientHeight;
-      const ctx = canvas.getContext('2d');
-      if (ctx) setCtx(ctx);
+    if (!canvas) return;
+
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;
+
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      ctxRef.current = ctx;
     }
-  }, [setCtx]);
+  }, [ctxRef]);
 
   useEffect(() => {
     resizeCanvas();

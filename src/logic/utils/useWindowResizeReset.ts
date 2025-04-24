@@ -11,19 +11,18 @@ export const useWindowResizeReset = () => {
   const { clearInput } = useInputContext();
   const { clearSimulations } = useSimulationContext();
   const { setUIState } = useStateContext();
-  const { ctx } = useCanvasContext();
+  const { ctxRef } = useCanvasContext();
 
   useEffect(() => {
     const handleResize = () => {
       clearInput();
       clearSimulations();
       setUIState(UIStates.CHOOSING_GRAVITY);
-      if (ctx) {
-        clearCanvas(ctx);
-      }
+      if (!ctxRef.current) return;
+      clearCanvas(ctxRef.current);
     };
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, [clearInput, clearSimulations, setUIState, ctx]);
+  }, [clearInput, clearSimulations, setUIState, ctxRef]);
 };

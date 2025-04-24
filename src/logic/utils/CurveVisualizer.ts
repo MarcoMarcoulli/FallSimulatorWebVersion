@@ -2,9 +2,6 @@ import { Point } from '../../types/Point';
 import { SimulationManager } from '../simulation/SimulationManager';
 import { drawStartPoint, drawEndPoint, drawIntermediatePoint } from './PointDrawer';
 
-/**
- * Disegna una curva sul canvas collegando i punti consecutivamente.
- */
 export function drawCurve(
   points: Point[],
   ctx: CanvasRenderingContext2D,
@@ -27,16 +24,11 @@ export function drawCurve(
   }
   ctx.stroke();
 
-  // Ridisegna i punti in primo piano
   if (startPoint) drawStartPoint(ctx, startPoint);
   if (endPoint) drawEndPoint(ctx, endPoint);
   intermediatePoints.forEach((pt) => drawIntermediatePoint(ctx, pt));
 }
 
-/**
- * Pulisce il canvas e ridisegna tutte le curve tranne l'ultima,
- * poi disegna i punti attuali forniti dal context.
- */
 export const clearLastCurve = (
   simulations: SimulationManager[],
   ctx: CanvasRenderingContext2D,
@@ -46,15 +38,13 @@ export const clearLastCurve = (
 ): void => {
   if (!ctx) return;
 
-  // Pulisce il canvas
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-  // Ridisegna tutte le curve tranne l'ultima
   for (let i = 0; i < simulations.length - 1; i++) {
     const sim = simulations[i];
-    const curve = sim.getCurve();
+    const curve = sim.Curve;
     drawCurve(
-      sim.getPoints(),
+      sim.Points,
       ctx,
       startPoint,
       endPoint,
@@ -65,15 +55,11 @@ export const clearLastCurve = (
     );
   }
 
-  // Ridisegna i punti in primo piano
   if (startPoint) drawStartPoint(ctx, startPoint);
   if (endPoint) drawEndPoint(ctx, endPoint);
   intermediatePoints.forEach((pt) => drawIntermediatePoint(ctx, pt));
 };
 
-/**
- * Pulisce completamente il canvas.
- */
 export const clearCanvas = (ctx: CanvasRenderingContext2D): void => {
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 };

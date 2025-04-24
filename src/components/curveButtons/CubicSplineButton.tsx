@@ -8,12 +8,12 @@ import { useCanvasContext } from '../../context/canvas/useCanvasContext';
 import { UIStates } from '../../types/UIStates';
 
 const CubicSplineButton: React.FC = () => {
-  const { ctx } = useCanvasContext();
+  const { ctxRef } = useCanvasContext();
   const { setUIState } = useStateContext();
   const { startPoint, endPoint, g } = useInputContext();
 
   const handleCubicSplineClick = () => {
-    if (!startPoint || !endPoint || !ctx || g === null) {
+    if (!startPoint || !endPoint || !ctxRef || g === null) {
       console.warn('Dati mancanti per creare la cicloide.');
       return;
     }

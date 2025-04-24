@@ -15,16 +15,18 @@ interface ParabolaButtonProps {
 }
 
 const CycloidButton: React.FC<ParabolaButtonProps> = ({ onClick }) => {
-  const { ctx } = useCanvasContext();
+  const { ctxRef } = useCanvasContext();
   const { startPoint, endPoint, intermediatePoints, g } = useInputContext();
   const { setUIState } = useStateContext();
   const { addSimulation } = useSimulationContext();
 
   const handleCycloidClick = () => {
-    if (!startPoint || !endPoint || !ctx || g === null) {
+    if (!startPoint || !endPoint || !ctxRef || g === null) {
       console.warn('Dati mancanti per creare la cicloide.');
       return;
     }
+
+    if (!ctxRef.current) return;
 
     let cycloid;
     try {
@@ -37,13 +39,13 @@ const CycloidButton: React.FC<ParabolaButtonProps> = ({ onClick }) => {
     cycloid.setRandomColors();
 
     const simulation = new SimulationManager(cycloid);
-    simulation.setSlopes(cycloid.calculateSlopes());
+    simulation.Slopes = cycloid.calculateSlopes();
     simulation.calculateTimeParametrization(g);
     addSimulation(simulation);
 
     drawCurve(
-      simulation.getPoints(),
-      ctx,
+      simulation.Points,
+      ctxRef.current,
       startPoint,
       endPoint,
       intermediatePoints,

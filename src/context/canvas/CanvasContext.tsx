@@ -1,12 +1,9 @@
 // src/context/canvas/CanvasContext.ts
-import { createContext } from 'react';
+import { createContext, RefObject } from 'react';
 
-export interface CanvasContextType {
-  ctx: CanvasRenderingContext2D | null;
-  setCtx: (ctx: CanvasRenderingContext2D | null) => void;
+export interface CanvasRefs {
+  ctxRef: RefObject<CanvasRenderingContext2D | null>;
+  animationRef: RefObject<HTMLDivElement | null> | null;
 }
 
-export const CanvasContext = createContext<CanvasContextType>({
-  ctx: null,
-  setCtx: () => {},
-});
+export const CanvasContext = createContext<CanvasRefs | null>(null);

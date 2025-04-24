@@ -2,30 +2,21 @@
 import React, { useState } from 'react';
 import Canvas from './Canvas';
 import Modal from './ErrorModal';
-import { useSimulationContext } from '../context/simulation/useSimulationContext';
-import MassImage from './MassImage';
+import { useCanvasContext } from '../context/canvas/useCanvasContext';
 
 const AnimationLayer: React.FC = () => {
-  const { simulations } = useSimulationContext();
-
+  const { animationRef } = useCanvasContext();
   const [modalMessage, setModalMessage] = useState<string | null>(null);
 
-  const showModal = (msg: string) => {
-    setModalMessage(msg);
-  };
+  const showModalFromCanvas = (msg: string) => setModalMessage(msg);
 
   return (
     <div className="w-full h-full relative" id="animation-layer">
-      {/* Passa showModal a Canvas */}
-      <Canvas showModal={showModal} />
+      <Canvas showModal={showModalFromCanvas} />
 
-      {simulations.map((sim, index) => {
-        const mass = sim.getMass();
-        if (!mass) return null;
-        return <MassImage key={index} mass={mass} />;
-      })}
+      {/* layer per le masse */}
+      <div ref={animationRef} className="absolute inset-0 pointer-events-none z-20" />
 
-      {/* Mostra il modale se necessario */}
       {modalMessage && <Modal message={modalMessage} onClose={() => setModalMessage(null)} />}
     </div>
   );

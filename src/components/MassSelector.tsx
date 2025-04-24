@@ -1,21 +1,17 @@
 // src/components/MassSelector.tsx
 import React from 'react';
 import MassButton from './MassButton';
-import { MassIconType } from '../types/MassIconType';
 import { useStateContext } from '../context/state/useStateContext';
 import { useInputContext } from '../context/input/useInputContext';
 import { useSimulationContext } from '../context/simulation/useSimulationContext';
+import { useCanvasContext } from '../context/canvas/useCanvasContext';
 import { UIStates } from '../types/UIStates';
 import { Mass } from '../logic/simulation/Mass';
 
-import galileoImg from '../assets/masses/galileo.png';
-import newtonImg from '../assets/masses/newton.png';
-import leibnitzImg from '../assets/masses/leibnitz.png';
-import bernoulliImg from '../assets/masses/bernoulli.png';
-import jakobImg from '../assets/masses/jakob.png';
+import { MassIconType, MASS_ICONS } from '../types/MassIconType';
 
 interface MassSelectorProps {
-  hiddenMasses: Set<string>;
+  hiddenMasses: Set<MassIconType>;
   onMassSelect: (type: MassIconType) => void;
 }
 
@@ -23,48 +19,58 @@ const MassSelector: React.FC<MassSelectorProps> = ({ hiddenMasses, onMassSelect 
   const { setUIState } = useStateContext();
   const { startPoint } = useInputContext();
   const { simulations, updateLastSimulation } = useSimulationContext();
+  const { animationRef } = useCanvasContext();
 
-  const handleMassSelection = (iconType: MassIconType, imageSrc: string) => {
+  const handleMassSelection = (icon: { type: MassIconType; label: string; imageSrc: string }) => {
     if (!startPoint) {
       console.warn('Start point non definito.');
       return;
     }
 
-    const mass = new Mass(startPoint, iconType, imageSrc);
-
-    const lastSim = simulations.at(-1);
-    if (lastSim) {
-      updateLastSimulation((prevSim) => {
-        prevSim.setMass(mass);
-        return prevSim;
-      });
+    if (!animationRef!.current) {
+      console.error('Layer di animazione non inizializzato.');
+      return;
     }
 
-    onMassSelect(iconType);
-    setUIState(UIStates.READY_TO_SIMULATE);
-  };
+    // 1) Crea l'immagine e l'oggetto Mass
+    const img = new Image();
+    img.src = icon.imageSrc;
+    img.width = Mass.diameter;
+    img.height = Mass.diameter;
+    img.style.position = 'absolute';
 
-  // Elenco delle masse disponibili
-  const masses = [
-    { type: MassIconType.GALILEO, label: 'GALILEO', img: galileoImg },
-    { type: MassIconType.NEWTON, label: 'NEWTON', img: newtonImg },
-    { type: MassIconType.LEIBNITZ, label: 'LEIBNITZ', img: leibnitzImg },
-    { type: MassIconType.BERNOULLI, label: 'BERNOULLI', img: bernoulliImg },
-    { type: MassIconType.JAKOB, label: 'JAKOB', img: jakobImg },
-  ];
+    // Quando l'immagine è pronta, appendi e aggiorna
+    img.onload = () => {
+      const mass = new Mass(startPoint, icon.type, icon.imageSrc);
+
+      // 2) Appendi l'elemento DOM al layer di animazione
+      animationRef!.current!.appendChild(mass.element);
+
+      // 3) Aggiorna l'ultima simulazione
+      const lastSim = simulations.at(-1);
+      if (lastSim) {
+        updateLastSimulation((prev) => {
+          prev.Mass = mass;
+          return prev;
+        });
+      }
+
+      // 4) Notifica la selezione e cambia stato UI
+      onMassSelect(icon.type);
+      setUIState(UIStates.READY_TO_SIMULATE);
+    };
+  };
 
   return (
     <div className="flex gap-4 flex-wrap">
-      {masses
-        .filter((mass) => !hiddenMasses.has(mass.type))
-        .map((mass) => (
-          <MassButton
-            key={mass.type}
-            imageSrc={mass.img}
-            label={mass.label}
-            onClick={() => handleMassSelection(mass.type, mass.img)}
-          />
-        ))}
+      {MASS_ICONS.filter((icon) => !hiddenMasses.has(icon.type)).map((icon) => (
+        <MassButton
+          key={icon.type}
+          imageSrc={icon.imageSrc}
+          label={icon.label}
+          onClick={() => handleMassSelection(icon)}
+        />
+      ))}
     </div>
   );
 };

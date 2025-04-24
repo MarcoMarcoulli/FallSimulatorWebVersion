@@ -18,7 +18,7 @@ const ConfirmRadiusButton: React.FC = () => {
     }
 
     updateLastSimulation((prevSim) => {
-      prevSim.setSlopes(prevSim.getCurve().calculateSlopes());
+      prevSim.Slopes = prevSim.Curve.calculateSlopes();
       prevSim.calculateTimeParametrization(g);
       return prevSim;
     });
