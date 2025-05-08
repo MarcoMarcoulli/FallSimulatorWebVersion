@@ -4,14 +4,17 @@ import { Dispatch, SetStateAction } from 'react';
 
 export interface InputContextType {
   startPoint: Point | null;
-  endPoint: Point | null;
-  intermediatePoints: Point[];
-  g: number;
   setStartPoint: (pt: Point) => void;
+
+  endPoint: Point | null;
   setEndPoint: (pt: Point) => void;
+
+  intermediatePoints: Point[][];
   addIntermediatePoint: (pt: Point) => void;
+  newIntermediatePointList: () => void;
   clearIntermediatePoints: () => void;
-  clearInput: () => void;
+
+  g: number;
   setG: (value: number) => void;
 
   radius: number | null;
@@ -22,6 +25,8 @@ export interface InputContextType {
 
   convexity: 1 | -1 | null;
   setConvexity: Dispatch<SetStateAction<1 | -1 | null>>;
+
+  clearInput: () => void;
 }
 
 export const InputContext = createContext<InputContextType | undefined>(undefined);

@@ -1,8 +1,8 @@
 import React from 'react';
-import ParabolaButton from './curveButtons/ParabolaButton';
-import CycloidButton from './curveButtons/CycloidButton';
-import CircleButton from './curveButtons/CircleButton';
-import CubicSplineButton from './curveButtons/CubicSplineButton';
+import ParabolaButton from './ParabolaButton';
+import CycloidButton from './CycloidButton';
+import CircleButton from './CircleButton';
+import CubicSplineButton from './CubicSplineButton';
 
 interface Props {
   showParabola: boolean;

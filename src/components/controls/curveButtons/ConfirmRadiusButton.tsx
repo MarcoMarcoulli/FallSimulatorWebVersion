@@ -1,8 +1,8 @@
 import React from 'react';
-import { useInputContext } from '../../context/input/useInputContext';
-import { useStateContext } from '../../context/state/useStateContext';
-import { useSimulationContext } from '../../context/simulation/useSimulationContext';
-import { UIStates } from '../../types/UIStates';
+import { useInputContext } from '../../../context/input/useInputContext';
+import { useStateContext } from '../../../context/state/useStateContext';
+import { useSimulationContext } from '../../../context/simulation/useSimulationContext';
+import { UIStates } from '../../../types/UIStates';
 
 const ConfirmRadiusButton: React.FC = () => {
   const { g } = useInputContext();

@@ -1,21 +1,22 @@
 // src/components/ControlPanel.tsx
 import React, { useState } from 'react';
-import { useStateContext } from '../context/state/useStateContext';
-import { UIStates } from '../types/UIStates';
+import { useStateContext } from '../../context/state/useStateContext';
+import { UIStates } from '../../types/UIStates';
 
-import MessageDisplay from './MessageDisplay';
-
+import MessageDisplay from '../messages/MessageDisplay';
 import PlanetSelector from './PlanetSelector';
 import MassSelector from './MassSelector';
 import CancelInputButton from './CancelInputButton';
-import CurveSelector from './CurveSelector';
-import InsertAnotherCurveButton from './curveButtons/InsertAnotherCurveButton';
+import CurveSelector from './curveButtons/CurveSelector';
+import InsertAnotherCurveButton from './InsertAnotherCurveButton';
 import StartSimulationButton from './StartSimulationButton';
 import ConvexityButtons from './curveButtons/ConvexityButtons';
 import StopIntermediatePointsInsertion from './curveButtons/StopIntermediatePointsInsertionButton';
 import RadiusSlider from './curveButtons/RadiusSlider';
 import ConfirmRadiusButton from './curveButtons/ConfirmRadiusButton';
-import { MassIconType, MASS_ICONS } from '../types/MassIconType';
+import ArrivalMessages from '../messages/ArrivalMessages';
+import { MassIconType, MASS_ICONS } from '../../types/MassIconType';
+import { useWindowResizeReset } from '../../logic/utils/useWindowResizeReset';
 
 const ControlPanel: React.FC = () => {
   const { UIState } = useStateContext();
@@ -35,6 +36,8 @@ const ControlPanel: React.FC = () => {
   const resetMasses = () => setHiddenMasses(new Set());
 
   const allMassesUsed = hiddenMasses.size === MASS_ICONS.length;
+
+  useWindowResizeReset(resetButtonsVisibility, resetMasses);
 
   return (
     <div className="flex flex-col gap-4 p-4">
@@ -71,7 +74,7 @@ const ControlPanel: React.FC = () => {
         </>
       )}
 
-      {UIState === UIStates.READY_TO_SIMULATE && (
+      {(UIState === UIStates.READY_TO_SIMULATE || UIState === UIStates.SHOWING_RESULTS) && (
         <>
           {!allMassesUsed && <InsertAnotherCurveButton />}
           <StartSimulationButton />
@@ -83,6 +86,10 @@ const ControlPanel: React.FC = () => {
           resetButtonsVisibility={resetButtonsVisibility}
           resetMasses={resetMasses}
         />
+      )}
+
+      {(UIState === UIStates.SIMULATING || UIState === UIStates.SHOWING_RESULTS) && (
+        <ArrivalMessages />
       )}
     </div>
   );

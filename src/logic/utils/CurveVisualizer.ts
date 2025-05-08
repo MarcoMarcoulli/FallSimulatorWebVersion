@@ -1,13 +1,24 @@
+// src/logic/utils/CurveVisualizer.ts
+
 import { Point } from '../../types/Point';
 import { SimulationManager } from '../simulation/SimulationManager';
 import { drawStartPoint, drawEndPoint, drawIntermediatePoint } from './PointDrawer';
 
+/**
+ * Disegna la curva e tutti i punti di input (start, end, intermediate).
+ * @param points        punti della curva calcolati
+ * @param ctx           contesto 2D del canvas
+ * @param startPoint    punto di partenza
+ * @param endPoint      punto di arrivo
+ * @param intermediate  lista di liste di punti intermedi
+ * @param red,green,blue colore della curva
+ */
 export function drawCurve(
   points: Point[],
   ctx: CanvasRenderingContext2D,
   startPoint: Point | null,
   endPoint: Point | null,
-  intermediatePoints: Point[],
+  intermediate: Point[][], // <-- cambia qui
   red: number,
   green: number,
   blue: number
@@ -26,20 +37,26 @@ export function drawCurve(
 
   if (startPoint) drawStartPoint(ctx, startPoint);
   if (endPoint) drawEndPoint(ctx, endPoint);
-  intermediatePoints.forEach((pt) => drawIntermediatePoint(ctx, pt));
+
+  // itero sui gruppi, poi sui singoli punti
+  intermediate.forEach((group) => group.forEach((pt) => drawIntermediatePoint(ctx, pt)));
 }
 
+/**
+ * Pulisce l’intero canvas, poi ridisegna tutte le curve tranne l’ultima,
+ * infine riposiziona startPoint, endPoint e tutti i punti intermedi.
+ */
 export const clearLastCurve = (
   simulations: SimulationManager[],
   ctx: CanvasRenderingContext2D,
   startPoint: Point | null,
   endPoint: Point | null,
-  intermediatePoints: Point[]
+  intermediate: Point[][] // <-- cambia qui
 ): void => {
-  if (!ctx) return;
-
+  // svuota tutto
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
+  // ridisegna tutte le curve tranne l’ultima
   for (let i = 0; i < simulations.length - 1; i++) {
     const sim = simulations[i];
     const curve = sim.Curve;
@@ -48,18 +65,21 @@ export const clearLastCurve = (
       ctx,
       startPoint,
       endPoint,
-      intermediatePoints,
+      intermediate,
       curve.getRed(),
       curve.getGreen(),
       curve.getBlue()
     );
   }
 
+  // infine ridisegna start/end e punti intermedi
   if (startPoint) drawStartPoint(ctx, startPoint);
   if (endPoint) drawEndPoint(ctx, endPoint);
-  intermediatePoints.forEach((pt) => drawIntermediatePoint(ctx, pt));
+
+  intermediate.forEach((group) => group.forEach((pt) => drawIntermediatePoint(ctx, pt)));
 };
 
+/** Semplice reset completo del canvas */
 export const clearCanvas = (ctx: CanvasRenderingContext2D): void => {
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 };

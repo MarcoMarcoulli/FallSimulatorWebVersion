@@ -1,14 +1,14 @@
 // src/components/MassSelector.tsx
 import React from 'react';
 import MassButton from './MassButton';
-import { useStateContext } from '../context/state/useStateContext';
-import { useInputContext } from '../context/input/useInputContext';
-import { useSimulationContext } from '../context/simulation/useSimulationContext';
-import { useCanvasContext } from '../context/canvas/useCanvasContext';
-import { UIStates } from '../types/UIStates';
-import { Mass } from '../logic/simulation/Mass';
+import { useStateContext } from '../../context/state/useStateContext';
+import { useInputContext } from '../../context/input/useInputContext';
+import { useSimulationContext } from '../../context/simulation/useSimulationContext';
+import { useCanvasContext } from '../../context/canvas/useCanvasContext';
+import { UIStates } from '../../types/UIStates';
+import { Mass } from '../../logic/simulation/Mass';
 
-import { MassIconType, MASS_ICONS } from '../types/MassIconType';
+import { MassIconType, MASS_ICONS } from '../../types/MassIconType';
 
 interface MassSelectorProps {
   hiddenMasses: Set<MassIconType>;
@@ -32,21 +32,17 @@ const MassSelector: React.FC<MassSelectorProps> = ({ hiddenMasses, onMassSelect 
       return;
     }
 
-    // 1) Crea l'immagine e l'oggetto Mass
     const img = new Image();
     img.src = icon.imageSrc;
     img.width = Mass.diameter;
     img.height = Mass.diameter;
     img.style.position = 'absolute';
 
-    // Quando l'immagine è pronta, appendi e aggiorna
     img.onload = () => {
       const mass = new Mass(startPoint, icon.type, icon.imageSrc);
 
-      // 2) Appendi l'elemento DOM al layer di animazione
       animationRef!.current!.appendChild(mass.element);
 
-      // 3) Aggiorna l'ultima simulazione
       const lastSim = simulations.at(-1);
       if (lastSim) {
         updateLastSimulation((prev) => {
@@ -55,7 +51,6 @@ const MassSelector: React.FC<MassSelectorProps> = ({ hiddenMasses, onMassSelect 
         });
       }
 
-      // 4) Notifica la selezione e cambia stato UI
       onMassSelect(icon.type);
       setUIState(UIStates.READY_TO_SIMULATE);
     };

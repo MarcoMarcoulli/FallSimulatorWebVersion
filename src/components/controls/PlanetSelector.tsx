@@ -1,21 +1,21 @@
 // src/components/PlanetSelector.tsx
 import React from 'react';
 
-import { useStateContext } from '../context/state/useStateContext';
-import { useInputContext } from '../context/input/useInputContext';
+import { useStateContext } from '../../context/state/useStateContext';
+import { useInputContext } from '../../context/input/useInputContext';
 
-import { UIStates } from '../types/UIStates';
+import { UIStates } from '../../types/UIStates';
 
 import PlanetButton from './PlanetButton';
-import { PlanetIcon, gravityMapping } from '../types/PlanetIconType';
+import { PlanetIcon, gravityMapping } from '../../types/PlanetIconType';
 
 const pixelHeightMm = 1;
 
-import moonImg from '../assets/planets/moon.png';
-import marsImg from '../assets/planets/mars.png';
-import earthImg from '../assets/planets/earth.png';
-import jupiterImg from '../assets/planets/jupiter.png';
-import sunImg from '../assets/planets/sun.png';
+import moonImg from '../../assets/planets/moon.png';
+import marsImg from '../../assets/planets/mars.png';
+import earthImg from '../../assets/planets/earth.png';
+import jupiterImg from '../../assets/planets/jupiter.png';
+import sunImg from '../../assets/planets/sun.png';
 
 const PlanetSelector: React.FC = () => {
   const { setUIState } = useStateContext();

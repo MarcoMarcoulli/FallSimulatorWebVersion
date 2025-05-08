@@ -9,7 +9,7 @@ interface InputProviderProps {
 export const InputProvider: React.FC<InputProviderProps> = ({ children }) => {
   const [startPoint, setStartPointState] = useState<Point | null>(null);
   const [endPoint, setEndPointState] = useState<Point | null>(null);
-  const [intermediatePoints, setIntermediatePointsState] = useState<Point[]>([]);
+  const [intermediatePoints, setIntermediatePoints] = useState<Point[][]>([]);
   const [g, setG] = useState<number>(0);
 
   const [radius, setRadius] = useState<number | null>(null);
@@ -25,13 +25,29 @@ export const InputProvider: React.FC<InputProviderProps> = ({ children }) => {
     setEndPointState(pt);
   };
 
+  // aggiunge pt all’ultima sottolista, o ne crea una nuova se non esiste
   const addIntermediatePoint = (pt: Point) => {
-    const updatedPoints = [...intermediatePoints, pt];
-    updatedPoints.sort((a, b) => a.x - b.x);
-    setIntermediatePointsState(updatedPoints);
+    setIntermediatePoints((prev) => {
+      if (prev.length === 0) {
+        // primo gruppo
+        return [[pt]];
+      } else {
+        // append all’ultima lista
+        const last = prev[prev.length - 1];
+        const updatedLast = [...last, pt].sort((a, b) => a.x - b.x);
+        return [...prev.slice(0, -1), updatedLast];
+      }
+    });
   };
 
-  const clearIntermediatePoints = () => setIntermediatePointsState([]);
+  const newIntermediatePointList = () => {
+    setIntermediatePoints((prevLists) => [
+      ...prevLists,
+      [], // una nuova lista vuota pronta per essere popolata
+    ]);
+  };
+
+  const clearIntermediatePoints = () => setIntermediatePoints([]);
 
   const clearInput = () => {
     setStartPointState(null);
@@ -52,6 +68,7 @@ export const InputProvider: React.FC<InputProviderProps> = ({ children }) => {
         setStartPoint,
         setEndPoint,
         addIntermediatePoint,
+        newIntermediatePointList,
         clearIntermediatePoints,
         clearInput,
         setG,

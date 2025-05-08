@@ -1,11 +1,11 @@
 // src/types/MassIcon.ts
 
 export enum MassIconType {
-  GALILEO,
-  NEWTON,
-  LEIBNITZ,
-  BERNOULLI,
-  JAKOB,
+  GALILEO = 'GALILEO',
+  NEWTON = 'NEWTON',
+  LEIBNITZ = 'LEIBNITZ',
+  BERNOULLI = 'BERNOULLI',
+  JAKOB = 'JAKOB',
 }
 
 // 2) interfaccia per i dati di ciascuna massa
@@ -20,7 +20,7 @@ import galileoImg from '../assets/masses/galileo.png';
 import newtonImg from '../assets/masses/newton.png';
 import leibnitzImg from '../assets/masses/leibnitz.png';
 import bernoulliImg from '../assets/masses/bernoulli.png';
-import jakobImg from '../assets/masses/jakob.png';
+import jakobImg from '../assets/masses/Jakob.png';
 
 export const MASS_ICONS: MassIcon[] = [
   { type: MassIconType.GALILEO, label: 'GALILEO', imageSrc: galileoImg },

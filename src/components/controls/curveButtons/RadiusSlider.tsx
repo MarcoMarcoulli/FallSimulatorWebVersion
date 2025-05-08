@@ -1,11 +1,11 @@
 // src/components/RadiusSlider.tsx
 import React from 'react';
-import { useInputContext } from '../../context/input/useInputContext';
-import { useCanvasContext } from '../../context/canvas/useCanvasContext';
-import { useSimulationContext } from '../../context/simulation/useSimulationContext';
-import { Circle } from '../../logic/curves/Circle';
-import { drawCurve, clearLastCurve } from '../../logic/utils/CurveVisualizer';
-import { SimulationManager } from '../../logic/simulation/SimulationManager';
+import { useInputContext } from '../../../context/input/useInputContext';
+import { useCanvasContext } from '../../../context/canvas/useCanvasContext';
+import { useSimulationContext } from '../../../context/simulation/useSimulationContext';
+import { Circle } from '../../../logic/curves/Circle';
+import { drawCurve, clearLastCurve } from '../../../logic/utils/CurveVisualizer';
+import { SimulationManager } from '../../../logic/simulation/SimulationManager';
 
 const RadiusSlider: React.FC = () => {
   const { startPoint, endPoint, intermediatePoints, radius, setRadius, initialRadius, convexity } =

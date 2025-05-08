@@ -8,7 +8,11 @@ export interface SimulationContextType {
   replaceLastSimulation: (sim: SimulationManager) => void;
   updateLastSimulation: (updater: (sim: SimulationManager) => SimulationManager) => void;
   clearSimulations: () => void;
+  clearMessages: () => void;
   lastSimulation: () => SimulationManager | undefined;
+  arrivedMasses: number;
+  arrivalMessages: string[];
+  neverArriveMessages: string[];
 }
 
 export const SimulationContext = createContext<SimulationContextType | undefined>(undefined);

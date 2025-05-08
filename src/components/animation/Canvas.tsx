@@ -1,11 +1,11 @@
 import React, { useRef, useEffect, useCallback } from 'react';
-import { useStateContext } from '../context/state/useStateContext';
-import { useInputContext } from '../context/input/useInputContext';
-import { UIStates } from '../types/UIStates';
-import { Point } from '../types/Point';
-import { useCanvasContext } from '../context/canvas/useCanvasContext';
-import { drawStartPoint, drawEndPoint, drawIntermediatePoint } from '../logic/utils/PointDrawer';
-import { validateEndPoint, validateIntermediatePoint } from '../logic/utils/InputValidator';
+import { useStateContext } from '../../context/state/useStateContext';
+import { useInputContext } from '../../context/input/useInputContext';
+import { UIStates } from '../../types/UIStates';
+import { Point } from '../../types/Point';
+import { useCanvasContext } from '../../context/canvas/useCanvasContext';
+import { drawStartPoint, drawEndPoint, drawIntermediatePoint } from '../../logic/utils/PointDrawer';
+import { validateEndPoint, validateIntermediatePoint } from '../../logic/utils/InputValidator';
 
 interface CanvasProps {
   showModal: (msg: string) => void;

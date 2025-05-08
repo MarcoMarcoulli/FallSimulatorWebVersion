@@ -1,20 +1,20 @@
 import React from 'react';
-import { useInputContext } from '../../context/input/useInputContext';
-import { useCanvasContext } from '../../context/canvas/useCanvasContext';
-import { useStateContext } from '../../context/state/useStateContext';
-import { useSimulationContext } from '../../context/simulation/useSimulationContext';
+import { useInputContext } from '../../../context/input/useInputContext';
+import { useCanvasContext } from '../../../context/canvas/useCanvasContext';
+import { useStateContext } from '../../../context/state/useStateContext';
+import { useSimulationContext } from '../../../context/simulation/useSimulationContext';
 
-import { Circle } from '../../logic/curves/Circle';
-import { drawCurve } from '../../logic/utils/CurveVisualizer';
-import { SimulationManager } from '../../logic/simulation/SimulationManager';
-import { UIStates } from '../../types/UIStates';
+import { Circle } from '../../../logic/curves/Circle';
+import { drawCurve } from '../../../logic/utils/CurveVisualizer';
+import { SimulationManager } from '../../../logic/simulation/SimulationManager';
+import { UIStates } from '../../../types/UIStates';
 
 interface ConvexityButtonProps {
   convexity: 1 | -1;
 }
 
 const ConvexityButton: React.FC<ConvexityButtonProps> = ({ convexity }) => {
-  const { startPoint, endPoint, intermediatePoints, g } = useInputContext();
+  const { startPoint, endPoint, intermediatePoints } = useInputContext();
   const { setRadius, setConvexity, setInitialRadius } = useInputContext();
   const { ctxRef } = useCanvasContext();
   const { setUIState } = useStateContext();
@@ -30,8 +30,6 @@ const ConvexityButton: React.FC<ConvexityButtonProps> = ({ convexity }) => {
 
     // Prepara la simulazione
     const sim = new SimulationManager(circle);
-    sim.Slopes = circle.calculateSlopes();
-    sim.calculateTimeParametrization(g);
     addSimulation(sim);
 
     // Disegna la curva sul canvas

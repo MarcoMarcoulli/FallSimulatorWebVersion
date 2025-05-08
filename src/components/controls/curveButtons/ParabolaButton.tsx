@@ -1,16 +1,16 @@
 import React from 'react';
 
-import { useCanvasContext } from '../../context/canvas/useCanvasContext';
-import { useInputContext } from '../../context/input/useInputContext';
-import { useStateContext } from '../../context/state/useStateContext';
-import { useSimulationContext } from '../../context/simulation/useSimulationContext';
+import { useCanvasContext } from '../../../context/canvas/useCanvasContext';
+import { useInputContext } from '../../../context/input/useInputContext';
+import { useStateContext } from '../../../context/state/useStateContext';
+import { useSimulationContext } from '../../../context/simulation/useSimulationContext';
 
-import { UIStates } from '../../types/UIStates';
+import { UIStates } from '../../../types/UIStates';
 
-import { Parabola } from '../../logic/curves/Parabola';
-import { drawCurve } from '../../logic/utils/CurveVisualizer';
+import { Parabola } from '../../../logic/curves/Parabola';
+import { drawCurve } from '../../../logic/utils/CurveVisualizer';
 
-import { SimulationManager } from '../../logic/simulation/SimulationManager';
+import { SimulationManager } from '../../../logic/simulation/SimulationManager';
 
 interface ParabolaButtonProps {
   onClick?: () => void;

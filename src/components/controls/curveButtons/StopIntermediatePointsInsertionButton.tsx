@@ -1,18 +1,17 @@
 import React from 'react';
-import { useCanvasContext } from '../../context/canvas/useCanvasContext';
-import { useInputContext } from '../../context/input/useInputContext';
-import { useStateContext } from '../../context/state/useStateContext';
-import { useSimulationContext } from '../../context/simulation/useSimulationContext';
+import { useCanvasContext } from '../../../context/canvas/useCanvasContext';
+import { useInputContext } from '../../../context/input/useInputContext';
+import { useStateContext } from '../../../context/state/useStateContext';
+import { useSimulationContext } from '../../../context/simulation/useSimulationContext';
 
-import { UIStates } from '../../types/UIStates';
-import { CubicSpline } from '../../logic/curves/CubicSpline';
-import { drawCurve } from '../../logic/utils/CurveVisualizer';
-import { SimulationManager } from '../../logic/simulation/SimulationManager';
+import { UIStates } from '../../../types/UIStates';
+import { CubicSpline } from '../../../logic/curves/CubicSpline';
+import { drawCurve } from '../../../logic/utils/CurveVisualizer';
+import { SimulationManager } from '../../../logic/simulation/SimulationManager';
 
 const StopIntermediatePointsInsertion: React.FC = () => {
   const { ctxRef } = useCanvasContext();
-  const { startPoint, endPoint, intermediatePoints, g, clearIntermediatePoints } =
-    useInputContext();
+  const { startPoint, endPoint, intermediatePoints, g } = useInputContext();
   const { setUIState } = useStateContext();
   const { addSimulation } = useSimulationContext();
 
@@ -25,7 +24,7 @@ const StopIntermediatePointsInsertion: React.FC = () => {
     if (!ctxRef.current) return;
 
     // Crea la curva spline
-    const spline = new CubicSpline(startPoint, endPoint, intermediatePoints);
+    const spline = new CubicSpline(startPoint, endPoint, intermediatePoints.at(-1)!);
     spline.setRandomColors();
 
     // Crea simulazione
@@ -45,8 +44,6 @@ const StopIntermediatePointsInsertion: React.FC = () => {
       spline.getGreen(),
       spline.getBlue()
     );
-
-    clearIntermediatePoints();
 
     setUIState(UIStates.CHOOSING_MASS);
   };

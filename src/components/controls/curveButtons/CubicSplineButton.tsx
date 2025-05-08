@@ -1,16 +1,16 @@
 // src/components/CubicSplineButton.tsx
 import React from 'react';
 
-import { useInputContext } from '../../context/input/useInputContext';
-import { useStateContext } from '../../context/state/useStateContext';
-import { useCanvasContext } from '../../context/canvas/useCanvasContext';
+import { useInputContext } from '../../../context/input/useInputContext';
+import { useStateContext } from '../../../context/state/useStateContext';
+import { useCanvasContext } from '../../../context/canvas/useCanvasContext';
 
-import { UIStates } from '../../types/UIStates';
+import { UIStates } from '../../../types/UIStates';
 
 const CubicSplineButton: React.FC = () => {
   const { ctxRef } = useCanvasContext();
   const { setUIState } = useStateContext();
-  const { startPoint, endPoint, g } = useInputContext();
+  const { startPoint, endPoint, g, newIntermediatePointList } = useInputContext();
 
   const handleCubicSplineClick = () => {
     if (!startPoint || !endPoint || !ctxRef || g === null) {
@@ -25,9 +25,7 @@ const CubicSplineButton: React.FC = () => {
 
     console.log('Colore spline generato:', { red, green, blue });
 
-    // Potrai passare questi colori al momento della creazione effettiva della curva
-
-    // Cambio stato per iniziare l’inserimento dei punti intermedi
+    newIntermediatePointList();
     setUIState(UIStates.INSERTING_INTERMEDIATE_POINTS);
   };
 

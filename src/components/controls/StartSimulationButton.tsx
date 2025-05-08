@@ -1,27 +1,21 @@
 // src/components/StartSimulationButton.tsx
 import React from 'react';
-import { useStateContext } from '../context/state/useStateContext';
-import { useSimulationContext } from '../context/simulation/useSimulationContext';
-import { useCanvasContext } from '../context/canvas/useCanvasContext';
-import { clearArrivalMessages } from '../logic/simulation/ArrivalMessages';
-import { UIStates } from '../types/UIStates';
+import { useStateContext } from '../../context/state/useStateContext';
+import { useSimulationContext } from '../../context/simulation/useSimulationContext';
+import { useCanvasContext } from '../../context/canvas/useCanvasContext';
+import { UIStates } from '../../types/UIStates';
 
 const StartSimulationButton: React.FC = () => {
   const { setUIState } = useStateContext();
-  const { simulations } = useSimulationContext();
+  const { simulations, clearMessages } = useSimulationContext();
   const { animationRef } = useCanvasContext();
 
-  /** click → pulizia messaggi, stato SIMULATING, avvio animazioni */
   const handleClick = () => {
-    clearArrivalMessages();
-
-    // 1. cambia lo stato UI (mostra “SIMULAZIONE IN CORSO…”)
+    clearMessages();
     setUIState(UIStates.SIMULATING);
 
-    // 2. avvia tutte le simulazioni
     simulations.forEach((sim) => {
       if (!animationRef!.current) return;
-
       sim.startAnimation(animationRef!.current);
     });
   };

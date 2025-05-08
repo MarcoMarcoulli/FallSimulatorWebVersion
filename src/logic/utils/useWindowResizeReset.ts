@@ -4,25 +4,39 @@ import { useInputContext } from '../../context/input/useInputContext';
 import { useSimulationContext } from '../../context/simulation/useSimulationContext';
 import { useStateContext } from '../../context/state/useStateContext';
 import { useCanvasContext } from '../../context/canvas/useCanvasContext';
-import { UIStates } from '../../types/UIStates';
-import { clearCanvas } from '../../logic/utils/CurveVisualizer';
+import { resetAll } from './reset';
 
-export const useWindowResizeReset = () => {
+export const useWindowResizeReset = (
+  resetButtonsVisibility: () => void,
+  resetMasses: () => void
+) => {
   const { clearInput } = useInputContext();
   const { clearSimulations } = useSimulationContext();
   const { setUIState } = useStateContext();
-  const { ctxRef } = useCanvasContext();
+  const { ctxRef, animationRef } = useCanvasContext();
 
   useEffect(() => {
-    const handleResize = () => {
-      clearInput();
-      clearSimulations();
-      setUIState(UIStates.CHOOSING_GRAVITY);
-      if (!ctxRef.current) return;
-      clearCanvas(ctxRef.current);
+    const handler = () => {
+      if (!ctxRef.current || !animationRef!.current) return;
+      resetAll(
+        clearInput,
+        clearSimulations,
+        ctxRef.current,
+        animationRef!.current,
+        resetButtonsVisibility,
+        resetMasses,
+        setUIState
+      );
     };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [clearInput, clearSimulations, setUIState, ctxRef]);
+    window.addEventListener('resize', handler);
+    return () => window.removeEventListener('resize', handler);
+  }, [
+    clearInput,
+    clearSimulations,
+    setUIState,
+    ctxRef,
+    animationRef,
+    resetButtonsVisibility,
+    resetMasses,
+  ]);
 };

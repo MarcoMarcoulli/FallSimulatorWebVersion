@@ -4,13 +4,26 @@ import { Mass } from './Mass';
 
 export type ArrivalCallback = (arrived: boolean) => void;
 
+function binarySearch(arr: number[], target: number): number {
+  let low = 0;
+  let high = arr.length - 1;
+  while (low <= high) {
+    const mid = Math.floor((low + high) / 2);
+    if (arr[mid] < target) {
+      low = mid + 1;
+    } else {
+      high = mid - 1;
+    }
+  }
+  return low;
+}
+
 export class SimulationManager {
   private mass: Mass | null = null;
   private readonly curve: Curve;
   private readonly points: Point[];
   private slopes: number[] = [];
   private times: number[] = [];
-
   private onArrival: ArrivalCallback | null = null;
 
   constructor(curve: Curve) {
@@ -26,7 +39,7 @@ export class SimulationManager {
     this.slopes = s;
   }
 
-  set ArrivalCallback(callback: ArrivalCallback) {
+  set OnArrival(callback: ArrivalCallback) {
     this.onArrival = callback;
   }
 
@@ -38,22 +51,26 @@ export class SimulationManager {
     return this.mass;
   }
 
-  get Points() {
+  get Points(): Point[] {
     return this.points;
   }
 
-  getTimes() {
+  getTimes(): number[] {
     return this.times;
   }
 
-  getArrivalTime() {
+  getArrivalTime(): number {
     return this.times.at(-1) ?? 0;
   }
 
-  calculateTimeParametrization(g: number) {
+  calculateTimeParametrization(g: number): void {
     const n = this.points.length;
-    this.times = Array<number>(n).fill(0);
+    this.times = Array(n).fill(0);
     this.times[1] = Number.EPSILON;
+
+    if (this.slopes.length !== this.points.length) {
+      throw new Error('La lunghezza di slopes non corrisponde al numero di punti.');
+    }
 
     for (let i = 2; i < n; i++) {
       const h1 = this.points[i - 1].y - this.points[0].y;
@@ -66,51 +83,72 @@ export class SimulationManager {
 
       const v1 = Math.sqrt(2 * g * h1);
       const v2 = Math.sqrt(2 * g * h2);
-      const v1y = v1 * Math.abs(Math.sin(this.slopes[i - 1] || 0));
-      const v2y = v2 * Math.abs(Math.sin(this.slopes[i] || 0));
+      const v1y = v1 * Math.abs(Math.sin(this.slopes[i - 1]));
+      const v2y = v2 * Math.abs(Math.sin(this.slopes[i]));
       const dy = Math.abs(this.points[i].y - this.points[i - 1].y);
       const integrand = (1 / v1y + 1 / v2y) / 2;
       this.times[i] = this.times[i - 1] + integrand * dy;
     }
   }
 
-  /* ---------- Animazione ------------------------------- */
-
-  startAnimation(container: HTMLDivElement) {
+  startAnimation(container: HTMLDivElement): void {
     if (!this.mass) return;
 
+    // 1) Controllo che i tempi siano stati calcolati
+    if (this.times.length < 2) {
+      console.error('Tempi non calcolati o troppo pochi punti');
+      return;
+    }
+
+    // 2) Posiziona subito la massa al punto di partenza
+    this.mass.Position = this.points[0];
     const img = this.mass.element;
     if (!container.contains(img)) container.appendChild(img);
 
     const tStart = performance.now();
+    let hasStopped = false;
+    let rafId: number;
 
     const step = (now: number) => {
+      if (hasStopped) return;
+
       const elapsed = (now - tStart) / 1000;
-      let i = this.times.findIndex((t) => t > elapsed);
-      if (i === -1) i = this.times.length - 1;
+      const i = binarySearch(this.times, elapsed);
 
-      // → Massa ha raggiunto il traguardo
+      // → 3a) Se ho superato l’ultimo tempo, sono arrivato
       if (i >= this.times.length - 1) {
+        console.log('Arrivato, chiamo callback once');
         this.mass!.Position = this.points.at(-1)!;
+        hasStopped = true;
         this.onArrival?.(true);
+        cancelAnimationFrame(rafId);
         return;
       }
-
-      // → Massa non arriverà mai (risale oltre lo start)
-      if (i < this.times.length - 2 && this.points[i + 2].y < this.points[0].y) {
+      // → 3b) Altrimenti, se è un punto in cui risalgo sopra il punto di partenza,
+      //     lo tratto come “non arriverà mai”
+      else if (i < this.times.length - 2 && this.points[i + 2].y < this.points[0].y) {
+        this.mass!.Position = this.points[i];
+        hasStopped = true;
         this.onArrival?.(false);
+        cancelAnimationFrame(rafId);
         return;
       }
 
-      const ratio = (elapsed - this.times[i]) / (this.times[i + 1] - this.times[i]);
-      const x = this.points[i].x + (this.points[i + 1].x - this.points[i].x) * ratio;
-      const y = this.points[i].y + (this.points[i + 1].y - this.points[i].y) * ratio;
+      // → 3c) Altrimenti interpolazione lineare
+      const t1 = this.times[i];
+      const t2 = this.times[i + 1];
+      const p1 = this.points[i];
+      const p2 = this.points[i + 1];
+      const ratio = (elapsed - t1) / (t2 - t1);
+      this.mass!.Position = {
+        x: p1.x + (p2.x - p1.x) * ratio,
+        y: p1.y + (p2.y - p1.y) * ratio,
+      };
 
-      this.mass!.Position = { x, y };
-
-      requestAnimationFrame(step);
+      // → 4) richiedo il prossimo frame
+      rafId = requestAnimationFrame(step);
     };
 
-    requestAnimationFrame(step);
+    rafId = requestAnimationFrame(step);
   }
 }
