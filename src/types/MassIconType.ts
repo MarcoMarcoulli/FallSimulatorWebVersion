@@ -16,10 +16,10 @@ export interface MassIcon {
 }
 
 // 3) array di tutte le masse con i loro dati
-import galileoImg from '../assets/masses/galileo.png';
-import newtonImg from '../assets/masses/newton.png';
-import leibnitzImg from '../assets/masses/leibnitz.png';
-import bernoulliImg from '../assets/masses/bernoulli.png';
+import galileoImg from '../assets/masses/Galileo.png';
+import newtonImg from '../assets/masses/Newton.png';
+import leibnitzImg from '../assets/masses/Leibnitz.png';
+import bernoulliImg from '../assets/masses/Bernoulli.png';
 import jakobImg from '../assets/masses/Jakob.png';
 
 export const MASS_ICONS: MassIcon[] = [
