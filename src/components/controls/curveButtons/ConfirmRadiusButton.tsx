@@ -17,11 +17,10 @@ const ConfirmRadiusButton: React.FC = () => {
       return;
     }
 
-    updateLastSimulation((prevSim) => {
-      prevSim.Slopes = prevSim.Curve.calculateSlopes();
-      prevSim.calculateTimeParametrization(g);
-      return prevSim;
-    });
+    lastSim.Slopes = lastSim.Curve.calculateSlopes();
+    lastSim.calculateTimeParametrization(g);
+
+    updateLastSimulation(() => lastSim);
 
     setUIState(UIStates.CHOOSING_MASS);
   };

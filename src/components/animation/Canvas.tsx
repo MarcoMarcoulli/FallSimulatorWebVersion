@@ -79,7 +79,7 @@ const Canvas: React.FC<CanvasProps> = ({ showModal }) => {
           startPoint,
           endPoint,
           point,
-          intermediatePoints,
+          intermediatePoints.at(-1)!,
           showModal
         );
         if (!validated) return;
