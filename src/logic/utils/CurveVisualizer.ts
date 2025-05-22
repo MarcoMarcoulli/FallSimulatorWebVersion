@@ -18,7 +18,7 @@ export function drawCurve(
   ctx: CanvasRenderingContext2D,
   startPoint: Point | null,
   endPoint: Point | null,
-  intermediate: Point[][], // <-- cambia qui
+  intermediate: Point[][],
   red: number,
   green: number,
   blue: number
@@ -38,25 +38,18 @@ export function drawCurve(
   if (startPoint) drawStartPoint(ctx, startPoint);
   if (endPoint) drawEndPoint(ctx, endPoint);
 
-  // itero sui gruppi, poi sui singoli punti
   intermediate.forEach((group) => group.forEach((pt) => drawIntermediatePoint(ctx, pt)));
 }
 
-/**
- * Pulisce l’intero canvas, poi ridisegna tutte le curve tranne l’ultima,
- * infine riposiziona startPoint, endPoint e tutti i punti intermedi.
- */
 export const clearLastCurve = (
   simulations: SimulationManager[],
   ctx: CanvasRenderingContext2D,
   startPoint: Point | null,
   endPoint: Point | null,
-  intermediate: Point[][] // <-- cambia qui
+  intermediate: Point[][]
 ): void => {
-  // svuota tutto
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
-  // ridisegna tutte le curve tranne l’ultima
   for (let i = 0; i < simulations.length - 1; i++) {
     const sim = simulations[i];
     const curve = sim.Curve;
@@ -72,14 +65,12 @@ export const clearLastCurve = (
     );
   }
 
-  // infine ridisegna start/end e punti intermedi
   if (startPoint) drawStartPoint(ctx, startPoint);
   if (endPoint) drawEndPoint(ctx, endPoint);
 
   intermediate.forEach((group) => group.forEach((pt) => drawIntermediatePoint(ctx, pt)));
 };
 
-/** Semplice reset completo del canvas */
 export const clearCanvas = (ctx: CanvasRenderingContext2D): void => {
   ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 };

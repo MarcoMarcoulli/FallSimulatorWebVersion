@@ -25,14 +25,11 @@ export const InputProvider: React.FC<InputProviderProps> = ({ children }) => {
     setEndPointState(pt);
   };
 
-  // aggiunge pt all’ultima sottolista, o ne crea una nuova se non esiste
   const addIntermediatePoint = (pt: Point) => {
     setIntermediatePoints((prev) => {
       if (prev.length === 0) {
-        // primo gruppo
         return [[pt]];
       } else {
-        // append all’ultima lista
         const last = prev[prev.length - 1];
         const updatedLast = [...last, pt].sort((a, b) => a.x - b.x);
         return [...prev.slice(0, -1), updatedLast];
@@ -41,10 +38,7 @@ export const InputProvider: React.FC<InputProviderProps> = ({ children }) => {
   };
 
   const newIntermediatePointList = () => {
-    setIntermediatePoints((prevLists) => [
-      ...prevLists,
-      [], // una nuova lista vuota pronta per essere popolata
-    ]);
+    setIntermediatePoints((prevLists) => [...prevLists, []]);
   };
 
   const clearIntermediatePoints = () => setIntermediatePoints([]);

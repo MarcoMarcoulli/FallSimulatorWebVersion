@@ -4,7 +4,7 @@ import React from 'react';
 interface PlanetButtonProps {
   imageSrc: string;
   label: string;
-  gravityText: string; // Testo aggiuntivo, ad es. "g = 1,62". Se non presente, viene mostrato solo il label.
+  gravityText: string;
   onClick?: () => void;
 }
 

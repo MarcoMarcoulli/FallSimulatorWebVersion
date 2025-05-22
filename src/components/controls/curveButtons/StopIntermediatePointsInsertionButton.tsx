@@ -23,17 +23,14 @@ const StopIntermediatePointsInsertion: React.FC = () => {
 
     if (!ctxRef.current) return;
 
-    // Crea la curva spline
     const spline = new CubicSpline(startPoint, endPoint, intermediatePoints.at(-1)!);
     spline.setRandomColors();
 
-    // Crea simulazione
     const simulation = new SimulationManager(spline);
     simulation.Slopes = spline.calculateSlopes();
     simulation.calculateTimeParametrization(g);
     addSimulation(simulation);
 
-    // Disegna sul canvas
     drawCurve(
       simulation.Points,
       ctxRef.current,

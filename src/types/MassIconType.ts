@@ -8,14 +8,12 @@ export enum MassIconType {
   JAKOB = 'JAKOB',
 }
 
-// 2) interfaccia per i dati di ciascuna massa
 export interface MassIcon {
   type: MassIconType;
   label: string;
   imageSrc: string;
 }
 
-// 3) array di tutte le masse con i loro dati
 import galileoImg from '../assets/masses/Galileo.png';
 import newtonImg from '../assets/masses/Newton.png';
 import leibnitzImg from '../assets/masses/Leibnitz.png';

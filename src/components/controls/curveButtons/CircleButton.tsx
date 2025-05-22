@@ -6,7 +6,6 @@ const CircleButton: React.FC = () => {
   const { setUIState } = useStateContext();
 
   const handleCircleClick = () => {
-    // Transizione allo stato in cui si deve scegliere la convessità
     setUIState(UIStates.CHOOSING_CONVEXITY);
   };
 

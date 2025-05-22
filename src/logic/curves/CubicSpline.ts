@@ -11,7 +11,6 @@ export class CubicSpline extends Curve {
   constructor(startPoint: Point, endPoint: Point, intermediatePoints: Point[]) {
     super(startPoint, endPoint);
 
-    // Ordina i punti per x
     this.interpolationPoints = [startPoint, ...intermediatePoints, endPoint].sort(
       (a, b) => a.x - b.x
     );
@@ -27,17 +26,14 @@ export class CubicSpline extends Curve {
     }
   }
 
-  /** Valuta la y corrispondente a *x* sulla curva */
   public evaluateY(x: number): number {
     if (!this.splineFunction) {
-      // fallback lineare se la spline non è disponibile
       const m = this.intervalY / this.intervalX;
       return m * (x - this.startPoint.x) + this.startPoint.y;
     }
     return this.splineFunction(x);
   }
 
-  /** Genera i punti disegnabili sul canvas */
   public calculatePoints(): Point[] {
     const pts: Point[] = new Array(Curve.NUMPOINTS);
     for (let i = 0; i < Curve.NUMPOINTS - 1; i++) {
@@ -50,7 +46,6 @@ export class CubicSpline extends Curve {
     return pts;
   }
 
-  /** Calcola le pendenze della curva (serve alla simulazione) */
   public calculateSlopes(): number[] {
     const slopes = new Array<number>(Curve.NUMPOINTS);
 

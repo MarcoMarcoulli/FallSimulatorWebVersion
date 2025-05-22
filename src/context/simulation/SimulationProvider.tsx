@@ -14,9 +14,7 @@ export const SimulationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
   const { setUIState } = useStateContext();
   const { g } = useInputContext();
 
-  // ——————— SIDE‐EFFECT per aggiornare UI solo dopo il render ———————
   useEffect(() => {
-    // Non eseguo nulla se non ci sono simulazioni
     if (simulations.length === 0) return;
 
     if (arrivedMasses === simulations.length) {
@@ -47,7 +45,6 @@ export const SimulationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     };
   };
 
-  // ——————— addSimulation NON chiama più setUIState ———————
   const addSimulation = (sim: SimulationManager) => {
     sim.Slopes = sim.Curve.calculateSlopes();
     sim.calculateTimeParametrization(g);
@@ -55,8 +52,6 @@ export const SimulationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
 
     setSimulations((prev) => [...prev, sim]);
   };
-
-  // src/context/simulation/SimulationProvider.tsx
 
   const replaceLastSimulation = (newSim: SimulationManager) => {
     newSim.OnArrival = onMassArrival(newSim);
@@ -78,7 +73,6 @@ export const SimulationProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     setArrivalMessages([]);
     setNeverArriveMessages([]);
     setArrivedMasses(0);
-    // se vuoi tornare allo stato iniziale:
     setUIState(UIStates.CHOOSING_GRAVITY);
   };
 

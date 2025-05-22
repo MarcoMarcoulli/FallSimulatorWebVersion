@@ -94,13 +94,11 @@ export class SimulationManager {
   startAnimation(container: HTMLDivElement): void {
     if (!this.mass) return;
 
-    // 1) Controllo che i tempi siano stati calcolati
     if (this.times.length < 2) {
       console.error('Tempi non calcolati o troppo pochi punti');
       return;
     }
 
-    // 2) Posiziona subito la massa al punto di partenza
     this.mass.Position = this.points[0];
     const img = this.mass.element;
     if (!container.contains(img)) container.appendChild(img);
@@ -115,7 +113,6 @@ export class SimulationManager {
       const elapsed = (now - tStart) / 1000;
       const i = binarySearch(this.times, elapsed);
 
-      // → 3a) Se ho superato l’ultimo tempo, sono arrivato
       if (i >= this.times.length - 1) {
         console.log('Arrivato, chiamo callback once');
         this.mass!.Position = this.points.at(-1)!;
@@ -123,10 +120,7 @@ export class SimulationManager {
         this.onArrival?.(true);
         cancelAnimationFrame(rafId);
         return;
-      }
-      // → 3b) Altrimenti, se è un punto in cui risalgo sopra il punto di partenza,
-      //     lo tratto come “non arriverà mai”
-      else if (i < this.times.length - 2 && this.points[i + 2].y < this.points[0].y) {
+      } else if (i < this.times.length - 2 && this.points[i + 2].y < this.points[0].y) {
         this.mass!.Position = this.points[i];
         hasStopped = true;
         this.onArrival?.(false);
@@ -134,7 +128,6 @@ export class SimulationManager {
         return;
       }
 
-      // → 3c) Altrimenti interpolazione lineare
       const t1 = this.times[i];
       const t2 = this.times[i + 1];
       const p1 = this.points[i];
@@ -145,7 +138,6 @@ export class SimulationManager {
         y: p1.y + (p2.y - p1.y) * ratio,
       };
 
-      // → 4) richiedo il prossimo frame
       rafId = requestAnimationFrame(step);
     };
 

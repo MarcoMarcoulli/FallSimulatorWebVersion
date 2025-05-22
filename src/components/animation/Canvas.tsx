@@ -24,7 +24,6 @@ const Canvas: React.FC<CanvasProps> = ({ showModal }) => {
     addIntermediatePoint,
   } = useInputContext();
 
-  // funzione per ridimensionare il canvas e aggiornare ctxRef
   const resizeCanvas = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;

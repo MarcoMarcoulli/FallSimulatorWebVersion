@@ -14,10 +14,8 @@ export function resetAll(
   clearInput();
   clearSimulations();
 
-  // 2. pulisci canvas
   clearCanvas(ctx);
 
-  // 3. pulisci layer animazione
   while (animationDiv.firstChild) {
     animationDiv.removeChild(animationDiv.firstChild);
   }

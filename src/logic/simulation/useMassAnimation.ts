@@ -10,5 +10,5 @@ export function useStartAnimation(
   useEffect(() => {
     if (!simulation || !container) return;
     simulation.startAnimation(container);
-  }, [simulation, container, onArrival]); // ok: param usato nella chiamata
+  }, [simulation, container, onArrival]);
 }

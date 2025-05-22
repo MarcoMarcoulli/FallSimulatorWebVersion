@@ -24,7 +24,7 @@ export class Parabola extends Curve {
     let x: number, y: number, t: number, yCubic: number;
 
     for (let i = 0; i < Curve.NUMPOINTS; i++) {
-      t = i / (Curve.NUMPOINTS - 1); // Normalizzazione
+      t = i / (Curve.NUMPOINTS - 1);
       yCubic = this.intervalY * Math.pow(t, 3);
       y = this.startPoint.y + yCubic;
       x = this.startPoint.x + this.evaluateX(yCubic);

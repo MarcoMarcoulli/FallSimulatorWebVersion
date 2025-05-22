@@ -24,15 +24,12 @@ const ConvexityButton: React.FC<ConvexityButtonProps> = ({ convexity }) => {
     if (!startPoint || !endPoint || !ctxRef) return;
     if (!ctxRef.current) return;
 
-    // Crea la curva
     const circle = new Circle(startPoint, endPoint, convexity);
     circle.setRandomColors();
 
-    // Prepara la simulazione
     const sim = new SimulationManager(circle);
     addSimulation(sim);
 
-    // Disegna la curva sul canvas
     drawCurve(
       sim.Points,
       ctxRef.current,
@@ -44,19 +41,16 @@ const ConvexityButton: React.FC<ConvexityButtonProps> = ({ convexity }) => {
       circle.getBlue()
     );
 
-    // Calcola raggio con segno corretto
     let computedRadius = circle.getR();
     if (convexity === 1) {
       const deltaX = endPoint.x - startPoint.x;
       computedRadius = (deltaX / Math.abs(deltaX)) * computedRadius;
     }
 
-    // Salva raggio e concavità nello stato
     setRadius(computedRadius);
     setInitialRadius(Math.abs(computedRadius));
     setConvexity(convexity);
 
-    // Stato successivo
     setUIState(UIStates.CHOOSING_RADIUS);
   };
 
